@@ -1,0 +1,299 @@
+---
+import Base from "../layouts/Base.astro";
+import { site } from "../lib/site";
+
+// "Catalog entries" counts top-level records in each catalog's controls.json;
+// control enhancements are nested inside those records, not counted separately.
+const frameworks = [
+  {
+    id: "nist-800-53-row",
+    name: "NIST SP 800-53 Rev 5",
+    included: true,
+    entries: "300",
+    why: "The common language. The control frameworks below are mapped onto 800-53, which is what lets them be combined.",
+    how: "Included. Fetched from NIST's official source, with the version and a fingerprint of the download recorded.",
+  },
+  {
+    id: "nist-800-171-row",
+    name: "NIST SP 800-171 Rev 3",
+    included: true,
+    entries: "97",
+    why: "Required when you handle Controlled Unclassified Information under a federal contract or grant.",
+    how: "Included, from NIST's official machine-readable release. Cited under its own name, never folded into 800-53. Rev 3 publishes no Low, Moderate or High baselines, so none are shown. Every one of the 97 requirements carries the 800-53 controls NIST derived it from, taken from NIST's own release.",
+  },
+  {
+    name: "HIPAA Security Rule",
+    included: true,
+    entries: "34",
+    why: "The legal baseline for anyone handling patient data in the US.",
+    how: "Included. Fetched from the official eCFR, with NIST's own HIPAA-to-800-53 map attached so HIPAA requirements land in the right topics.",
+  },
+  {
+    id: "hipaa-privacy-row",
+    name: "HIPAA Privacy Rule",
+    isNew: true,
+    included: true,
+    entries: "18",
+    why: "How patient information may be used and disclosed, and the rights patients have over it. 18 sections holding 863 paragraphs.",
+    how: "Included, from the official eCFR. eCFR still prints text a court vacated in 2025 (Purl v. HHS): it ships as printed, and the vacated paragraphs are marked, never used for drafting, and flagged when cited. That is the project’s reading of the judgment, not legal advice. NIST publishes no map from it to 800-53.",
+  },
+  {
+    name: "HIPAA Breach Notification Rule",
+    isNew: true,
+    included: true,
+    entries: "7",
+    why: "What to do, and whom to tell, when unsecured patient information is breached. 7 sections holding 31 paragraphs.",
+    how: "Included, from the official eCFR. NIST publishes no map from it to 800-53.",
+  },
+  {
+    name: "FedRAMP",
+    included: true,
+    entries: "42",
+    why: "Adds the values FedRAMP has already decided for federal cloud systems, and the guidance it layers on top.",
+    how: "Included, from FedRAMP's published rules. It adjusts 800-53 rather than replacing it, and it does not say which controls a Low, Moderate or High system needs — so that is left blank rather than guessed.",
+  },
+  {
+    name: "ARC-AMPE",
+    included: true,
+    entries: "215",
+    why: "The required baseline for organizations administering ACA marketplace coverage, who usually carry other frameworks too.",
+    how: "Included, from the CMS workbook. CMS publishes these controls with its decisions already filled in.",
+  },
+  {
+    name: "NIST AI RMF 1.0",
+    included: true,
+    entries: "19",
+    why: "For organizations building or buying AI systems. 19 categories holding 72 subcategories.",
+    how: "Included. It describes outcomes rather than obligations, so citing it shows where a document comes from without committing anyone to a particular action. It is deliberately not mapped onto 800-53, because NIST chose not to make that claim.",
+  },
+  {
+    id: "nist-csf-row",
+    name: "NIST CSF 2.0",
+    isNew: true,
+    included: true,
+    entries: "22",
+    why: "The Cybersecurity Framework many boards and partners ask about. 22 categories holding 106 subcategories.",
+    how: "Included, from NIST’s official machine-readable release, with NIST’s own map to 800-53. Like the AI RMF it describes outcomes rather than obligations, and NIST marks its map as not comprehensive, so every link counts as partial coverage.",
+  },
+  {
+    id: "nist-ai-rmf-playbook-row",
+    name: "NIST AI RMF Playbook",
+    included: true,
+    entries: "72",
+    why: "NIST's suggested actions for each of the AI RMF's 72 subcategories — 459 in all. This is where concrete AI actions come from without anyone inventing them.",
+    how: "Included, and voluntary. A document may say NIST suggests an action and never that NIST requires one — the pre-publish check fails any sentence that does. NIST gives the Playbook no version number, so it is pinned to one published export by fingerprint.",
+  },
+  {
+    name: "Information Blocking (45 CFR Part 171)",
+    included: true,
+    entries: "21",
+    why: "Rules on sharing electronic health information, for healthcare providers and health IT developers.",
+    how: "Included. Each entry is an exception — a condition under which a practice does not count as information blocking — rather than a safeguard to put in place, and it is treated that way.",
+  },
+  {
+    name: "Substance Use Disorder Records (42 CFR Part 2)",
+    included: true,
+    entries: "2",
+    why: "Confidentiality rules for substance use disorder treatment records.",
+    how: "Only the two sections that are real safeguards are included: record security and breach notification (§2.16), and disposing of records when a program closes (§2.19). The rest governs when a disclosure is allowed, which isn’t a control.",
+  },
+  {
+    id: "onc-row",
+    name: "ONC Certification Criteria (45 CFR 170.315)",
+    included: true,
+    entries: "59",
+    why: "The criteria certified health IT products are tested against — relevant if you build or run EHR and health IT software.",
+    how: "Included. Reserved and expired criteria are left out and named on every run. The list must exactly match one that two independent sources agree on, or the catalog refuses to load — an earlier version shipped with criteria that don’t exist, and this is how that can’t happen again.",
+  },
+  {
+    name: "HITRUST CSF",
+    included: false,
+    entries: "—",
+    why: "Usually the reason the project starts: a health plan or hospital asks a vendor for HITRUST certification.",
+    how: "Never included — it is licensed. You provide your own export from MyCSF under your own licence, and it is read on your machine. Reading it needs the licensed-framework plugin; contact us for it.",
+  },
+  {
+    name: "HITRUST AI Security",
+    included: false,
+    entries: "—",
+    why: "HITRUST’s add-on for organizations using AI, assessed on top of a CSF certification.",
+    how: "Never included — licensed like the CSF. You provide your own copy.",
+  },
+  {
+    name: "GovRAMP",
+    included: false,
+    entries: "—",
+    why: "The state and local government equivalent of FedRAMP.",
+    how: "Not included, because its terms don't clearly allow redistribution. You provide your own controls matrix. Reading it needs the licensed-framework plugin; contact us for it.",
+  },
+  {
+    id: "soc2-row",
+    name: "SOC 2 Trust Services Criteria",
+    isNew: true,
+    included: false,
+    entries: "—",
+    why: "The criteria behind a SOC 2 report, which many customers ask a vendor for.",
+    how: "Never included — the AICPA licenses it, and its terms bar derivative works and commercial use and object to AI use. You provide your own copy and decide whether those terms allow this; nothing is fetched from the AICPA. Reading it needs the licensed-framework plugin; contact us for it.",
+  },
+];
+---
+
+<Base
+  title="Frameworks"
+  description="Which frameworks PolicyForge works with, why each one is included, and how licensed content is protected."
+>
+  <main>
+    <section class="page-hero">
+      <div class="container">
+        <p class="eyebrow">Frameworks</p>
+        <h1>Seventeen frameworks, and exactly what happens to each one.</h1>
+        <p class="lede">
+          Thirteen are public and come included. Four are licensed, so you bring your own copy —
+          and the rules for where that copy may go are enforced by the software, not left
+          to a policy.
+        </p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Framework</th>
+                <th scope="col">Status</th>
+                <th scope="col">Catalog entries</th>
+                <th scope="col">Why it’s here</th>
+                <th scope="col">How it’s handled</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                frameworks.map((f) => (
+                  <tr id={f.id}>
+                    <td>
+                      <strong>{f.name}</strong>
+                      {f.isNew && <span class="new-tag">New</span>}
+                    </td>
+                    <td>
+                      <span class={f.included ? "badge ok" : "badge byo"}>
+                        {f.included ? "Included" : "Bring your own"}
+                      </span>
+                    </td>
+                    <td class="num">{f.entries}</td>
+                    <td>{f.why}</td>
+                    <td class="muted">{f.how}</td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+        <p class="table-note">
+          Catalog entries are the top-level items in each included framework; control
+          enhancements and subcategories sit inside them rather than being counted separately.
+        </p>
+        <div class="callout" style="margin-top: 2rem;">
+          <p>
+            <strong>Licensed-framework plugins.</strong> The readers for HITRUST, GovRAMP and
+            SOC 2 aren't part of the open-source tool, because they encode too much of those
+            frameworks' licensed structure. They're in a separate plugin.
+            <a href={site.pluginHref}>Contact us about the plugin</a> at {site.contactEmail}.
+          </p>
+        </div>
+
+        <div class="callout warn" style="margin-top: 2rem;">
+          <p>
+            <strong>Preparing for CMMC?</strong> CMMC Level 2 is currently assessed against
+            NIST 800-171 <em>Revision 2</em>. PolicyForge includes <em>Revision 3</em>, which
+            numbers requirements differently — <code>03.01.01</code> rather than
+            <code>3.1.1</code> — so a Revision 3 citation is not a Revision 2 citation. Check
+            which revision your assessor expects before relying on it.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section sunk">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow">Protecting licensed content</p>
+          <h2>Where each kind of content is allowed to go.</h2>
+          <p class="lede">
+            Sending a licensed framework to a hosted AI service is a form of sharing it. So
+            before every AI call, PolicyForge checks what the content is and where the model runs,
+            and refuses the combinations below.
+          </p>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Content</th>
+                <th scope="col">Model on your machine</th>
+                <th scope="col">Model on your network</th>
+                <th scope="col">Hosted AI service</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Public frameworks</strong><br /><span class="muted small">NIST, HIPAA, FedRAMP, ARC-AMPE</span></td>
+                <td class="yes">Allowed</td>
+                <td class="yes">Allowed</td>
+                <td class="yes">Allowed</td>
+              </tr>
+              <tr>
+                <td><strong>Your own documents</strong><br /><span class="muted small">drafts, topic list, settings</span></td>
+                <td class="yes">Allowed</td>
+                <td class="yes">Allowed</td>
+                <td class="yes">Allowed</td>
+              </tr>
+              <tr>
+                <td><strong>Licensed frameworks</strong><br /><span class="muted small">HITRUST CSF, HITRUST AI, GovRAMP, SOC 2</span></td>
+                <td class="yes">Allowed</td>
+                <td class="no">Refused</td>
+                <td class="no">Refused</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="table-note">
+          These are the defaults. You can make them stricter — for example, keeping your own
+          drafts off hosted services too. And if your organization has a data agreement that
+          covers sending licensed content to a particular hosted provider, you can declare that
+          provider in your settings; every licensed call then names it in the record of what
+          was sent where. Without that declaration, plan on a local model for HITRUST, GovRAMP
+          or SOC 2 content.
+        </p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="split">
+          <div class="split-head">
+            <h2 style="font-size: 1.6rem;">Your repository, your licence</h2>
+          </div>
+          <div class="prose">
+            <p>
+              The open-source project can never contain a HITRUST export, because anyone can
+              download it. Your own private repository is different: your MyCSF licence very
+              likely allows you to keep the export alongside your documents.
+            </p>
+            <p>
+              That is your call to make, so it is a single setting you switch on yourself:
+            </p>
+            <pre><code>frameworks:
+  allow_licensed_in_repo: true   <span class="cmt"># our MyCSF licence permits this</span></code></pre>
+            <p>
+              Until it is on, the pre-publish check fails if licensed content appears in your
+              repository. Any framework folder that doesn’t declare its licence is treated as
+              licensed — the safe assumption.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</Base>

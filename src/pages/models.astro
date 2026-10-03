@@ -1,0 +1,234 @@
+---
+import Base from "../layouts/Base.astro";
+
+const providers = [
+  {
+    name: "Anthropic",
+    id: "anthropic",
+    where: "Hosted",
+    good: "Direct access to Claude. Supports caching and batch pricing, which halves the cost of building a System Security Plan.",
+    watch: "Hosted, so licensed frameworks like HITRUST aren’t sent to it unless you declare that your data agreement covers it.",
+  },
+  {
+    name: "Amazon Bedrock",
+    id: "bedrock",
+    where: "Hosted",
+    good: "Keeps AI traffic inside an AWS account you already have security controls around.",
+    watch: "Still a hosted service for licensing purposes. Optional extra, not in the Homebrew install.",
+  },
+  {
+    name: "Google Vertex",
+    id: "vertex",
+    where: "Hosted",
+    good: "Keeps traffic inside Google Cloud, and supports caching.",
+    watch: "Optional extra, not in the Homebrew install.",
+  },
+  {
+    name: "Local or compatible",
+    id: "openai-compat",
+    where: "Either",
+    good: "Works with Ollama, llama.cpp, OpenRouter and most providers. On your own machine nothing leaves it and each run costs nothing — the default for licensed frameworks.",
+    watch: "Quality depends on the model you pick, and a small local model needs its context window set deliberately.",
+  },
+  {
+    name: "LiteLLM",
+    id: "litellm",
+    where: "Hosted",
+    good: "One setting reaches almost any AI provider, which makes comparing models easy.",
+    watch: "No caching support, so repeated context is paid for in full.",
+  },
+  {
+    name: "Cascade",
+    id: "cascade",
+    where: "Either",
+    good: "Pairs a cheap model with a stronger one, and escalates only when needed — the main way to control cost.",
+    watch: "Two setups to maintain. The call log shows which model actually answered each time.",
+  },
+];
+---
+
+<Base
+  title="Models & cost"
+  description="How PolicyForge uses AI, the ways to connect a model, and what a full set of documents actually costs."
+>
+  <main>
+    <section class="page-hero">
+      <div class="container">
+        <p class="eyebrow">Models &amp; cost</p>
+        <h1>You choose the AI model. You hold the key. You see the bill.</h1>
+        <p class="lede">
+          PolicyForge has no account and no hosted service in the middle. It connects directly to
+          the AI provider you configure — or to a model on your own machine.
+        </p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow">How AI is used</p>
+          <h2>The AI rewrites text it is given. It doesn’t decide anything.</h2>
+        </div>
+        <div class="grid">
+          <div class="card">
+            <h3>Works from your text</h3>
+            <p>
+              It merges and rewrites the framework text you loaded. It is never asked what a
+              framework says from memory — that is the most expensive kind of mistake this
+              could make.
+            </p>
+          </div>
+          <div class="card">
+            <h3>Leaves decisions to people</h3>
+            <p>
+              Review frequencies, who owns a topic, what is in scope, whether a document is
+              right, whether to publish, and whether you are compliant — each of those stays
+              with a person.
+            </p>
+          </div>
+          <div class="card">
+            <h3>Every call is logged</h3>
+            <p>
+              Which model, how many tokens, what it cost — including failed calls, because you
+              were billed for those too. The log never stores your content, so it can’t leak
+              it.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section sunk">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow">Connecting a model</p>
+          <h2>Six ways to connect, and when to use each.</h2>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Provider</th>
+                <th scope="col">Runs</th>
+                <th scope="col">Good for</th>
+                <th scope="col">Watch out for</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                providers.map((p) => (
+                  <tr>
+                    <td>
+                      <strong>{p.name}</strong>
+                      <br />
+                      <span class="mono muted">{p.id}</span>
+                    </td>
+                    <td>
+                      <span class={p.where === "Hosted" ? "badge byo" : "badge ok"}>{p.where}</span>
+                    </td>
+                    <td>{p.good}</td>
+                    <td class="muted">{p.watch}</td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+        <p class="table-note">
+          PolicyForge works out where a provider runs from its address. <code>policyforge boundary</code>
+          shows what it decided and why, so you can check before sending anything.
+        </p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow">What it costs</p>
+          <h2>Measured cost of drafting documents.</h2>
+          <p class="lede">
+            For each topic, one merged requirements list plus a Policy, Standard and Procedure.
+          </p>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Model</th>
+                <th scope="col">Topics</th>
+                <th scope="col">AI calls</th>
+                <th scope="col">Tokens in</th>
+                <th scope="col">Tokens out</th>
+                <th scope="col">Cost</th>
+                <th scope="col">Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>GLM 5.3 Flash <span class="muted small">(budget)</span></td>
+                <td class="num">20</td>
+                <td class="num">80</td>
+                <td class="num">493,151</td>
+                <td class="num">441,696</td>
+                <td class="num"><strong>$0.28</strong></td>
+                <td class="num">103 min</td>
+              </tr>
+              <tr>
+                <td>Claude Sonnet 5</td>
+                <td class="num">5</td>
+                <td class="num">25</td>
+                <td class="num">270,695</td>
+                <td class="num">254,612</td>
+                <td class="num"><strong>$3.09</strong></td>
+                <td class="num">37 min</td>
+              </tr>
+              <tr>
+                <td>Local model <span class="muted small">(Ollama)</span></td>
+                <td class="num">—</td>
+                <td class="num">—</td>
+                <td class="num">—</td>
+                <td class="num">—</td>
+                <td class="num"><strong>$0.00</strong></td>
+                <td class="num">depends on hardware</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="grid" style="margin-top: 2rem;">
+          <div class="card">
+            <h3>Per topic: $0.014 or $0.62</h3>
+            <p>
+              A full 20-topic set on Claude Sonnet comes to roughly $12. That is extrapolated
+              from five measured topics, so treat it as a ballpark, not a quote.
+            </p>
+          </div>
+          <div class="card">
+            <h3>Cost is not quality</h3>
+            <p>
+              These runs were measured for cost only. Nobody graded the resulting documents,
+              so the cheap row is not a recommendation.
+            </p>
+          </div>
+          <div class="card">
+            <h3>What isn’t measured yet</h3>
+            <p>
+              Savings from caching weren’t captured in these runs. For models that “think”
+              before answering, reported costs can be a floor, because hidden reasoning is
+              billed but not always reported.
+            </p>
+          </div>
+        </div>
+
+        <div class="callout warn" style="margin-top: 2rem;">
+          <p>
+            <strong>Using HITRUST, GovRAMP or SOC 2?</strong> By default that content only goes
+            to a model on your own machine, so plan on a local model for it, unless your
+            organization has a data agreement with a hosted provider and declares it.
+            <a href="/frameworks">See how content is protected.</a>
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+</Base>

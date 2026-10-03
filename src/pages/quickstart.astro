@@ -1,0 +1,155 @@
+---
+import Base from "../layouts/Base.astro";
+import { latestVersion } from "../lib/version";
+
+// Resolved at build time so the install pin cannot go stale in the page.
+const version = await latestVersion();
+---
+
+<Base
+  title="Quick start"
+  description="Install PolicyForge, the open-source tool, set up a project, and draft your first Standard in about ninety seconds."
+>
+  <main>
+    <section class="page-hero">
+      <div class="container">
+        <p class="eyebrow">Quick start</p>
+        <h1>Draft your first Standard in about ninety seconds.</h1>
+        <p class="lede">
+          PolicyForge is the open-source tool behind this site. You install it as the
+          <code>policyforge</code> command. Six steps, two AI calls, and on a budget model
+          less than a cent.
+        </p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <ol class="qs" style="list-style: none; padding: 0; margin: 0;">
+          <li class="qs-step">
+            <span class="qs-n">1</span>
+            <div class="qs-body">
+              <h3>Install</h3>
+              <pre><code>brew install rdazzleman/tap/policyforge
+
+<span class="cmt"># or, without Homebrew:</span>
+pipx install git+https://github.com/rdazzleman/policyforge@{version}</code></pre>
+              <p class="muted small">
+                The Homebrew version includes the common AI providers. Amazon Bedrock, Google
+                Vertex, LiteLLM and the MCP connector for AI assistants are optional extras,
+                available through pipx.
+              </p>
+            </div>
+          </li>
+
+          <li class="qs-step">
+            <span class="qs-n">2</span>
+            <div class="qs-body">
+              <h3>Create a project</h3>
+              <p>This makes a folder with the included frameworks and example settings.</p>
+              <pre><code>policyforge init my-policies && cd my-policies</code></pre>
+            </div>
+          </li>
+
+          <li class="qs-step">
+            <span class="qs-n">3</span>
+            <div class="qs-body">
+              <h3>Connect your AI model</h3>
+              <p>
+                Copy the example settings, then set your API key. The settings file stores
+                the <em>name</em> of the variable holding your key, never the key itself.
+              </p>
+              <pre><code>cp config/config.example.yaml config/config.yaml
+cp config/topics.example.yaml config/topics.yaml
+
+export ANTHROPIC_API_KEY=sk-...   <span class="cmt"># whichever variable your settings name</span>
+policyforge llm-check             <span class="cmt"># confirms the key and model work</span></code></pre>
+              <div class="callout">
+                <p>
+                  <strong>The topic list is yours to edit.</strong> It starts with twenty
+                  common topics, each with an owning team. It is really a statement of how
+                  your organization is arranged, so adjust it to match.
+                </p>
+              </div>
+            </div>
+          </li>
+
+          <li class="qs-step">
+            <span class="qs-n">4</span>
+            <div class="qs-body">
+              <h3>Map the frameworks together</h3>
+              <p>No AI is used here, so this step is free.</p>
+              <pre><code>policyforge map \
+  --controls data/frameworks/nist-800-53-r5/controls.json \
+  --controls data/frameworks/hipaa-security-rule/controls.json \
+  --controls data/frameworks/fedramp/controls.json \
+  --controls data/frameworks/arc-ampe/controls.json</code></pre>
+            </div>
+          </li>
+
+          <li class="qs-step">
+            <span class="qs-n">5</span>
+            <div class="qs-body">
+              <h3>Merge one topic’s requirements</h3>
+              <p>The first AI call. This one list feeds all three documents for the topic.</p>
+              <pre><code>policyforge synthesize \
+  --topic-name "Identity Lifecycle & Access Review" \
+  --controls data/frameworks/nist-800-53-r5/controls.json \
+  --controls data/frameworks/hipaa-security-rule/controls.json</code></pre>
+            </div>
+          </li>
+
+          <li class="qs-step">
+            <span class="qs-n">6</span>
+            <div class="qs-body">
+              <h3>Write the Standard</h3>
+              <pre><code>policyforge generate --tier standard \
+  --synthesis output/synthesis/identity-lifecycle-access-review.md</code></pre>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="section sunk">
+      <div class="container">
+        <div class="grid-2">
+          <div class="card">
+            <h3>What you get</h3>
+            <p>
+              The Standard in <code>output/standards/</code>, the merged requirements in
+              <code>output/synthesis/</code>, saved versions in <code>output/.history/</code>,
+              and a record of every AI call from <code>policyforge model-log</code>.
+            </p>
+          </div>
+          <div class="card">
+            <h3>Expect square brackets</h3>
+            <p>
+              The draft will name things like <code>[Identity Provider]</code> and
+              <code>[organization-defined frequency]</code>. Those are decisions only you can
+              make, left visible on purpose. Fill in tools and teams in
+              <code>config/config.yaml</code> and values with <code>policyforge parameters</code>,
+              then generate again.
+            </p>
+          </div>
+          <div class="card">
+            <h3>Where to go next</h3>
+            <p>
+              Write the Policy and Procedure with <code>--tier policy</code> and
+              <code>--tier procedure</code>. Run <code>policyforge coverage</code> to find
+              controls no topic owns. Then run <code>policyforge zardoz</code> and start asking
+              questions.
+            </p>
+          </div>
+          <div class="card">
+            <h3>Before you rely on it</h3>
+            <p>
+              Every draft needs a qualified person to read, correct and own it. PolicyForge
+              writes documents; it does not make you compliant or produce audit evidence.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</Base>

@@ -1,0 +1,87 @@
+---
+import "../styles/global.css";
+import { site, nav } from "../lib/site";
+
+interface Props {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props;
+const pageTitle = title === site.name ? site.name : `${title} · ${site.name}`;
+const here = Astro.url.pathname.replace(/\/$/, "") || "/";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=Public+Sans:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600&display=swap"
+    />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container">
+        <a class="brand" href="/">
+          <svg class="brand-mark" viewBox="0 0 28 28" width="28" height="28" aria-hidden="true">
+            <rect width="28" height="28" rx="7"></rect>
+            <path
+              d="M11 7.5H8.5v13H11M17 7.5h2.5v13H17"
+              fill="none"
+              stroke-width="2.2"
+              stroke-linecap="round"
+              stroke-linejoin="round"></path>
+          </svg>
+          {site.name}
+        </a>
+        <nav class="nav" aria-label="Main">
+          {
+            nav.map((n) => (
+              <a href={n.href} aria-current={here === n.href || here.startsWith(n.href + "/") ? "page" : undefined}>
+                {n.label}
+              </a>
+            ))
+          }
+          <a class="btn btn-primary btn-sm" href={site.contactHref}>Contact us</a>
+        </nav>
+      </div>
+    </header>
+
+    <slot />
+
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <strong style="color: var(--ink);">{site.name}</strong>
+            <span>
+              Home of PolicyForge, an open-source tool licensed Apache&#8209;2.0, and Zardoz, its question-answering shell.
+            </span>
+          </div>
+          <div class="footer-links">
+            {nav.map((n) => <a href={n.href}>{n.label}</a>)}
+            <a href={site.github}>GitHub</a>
+            <a href={site.contactHref}>{site.contactEmail}</a>
+          </div>
+        </div>
+        <div class="footer-fine" style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.5rem 2rem;">
+          <span>
+            PolicyForge drafts documents for expert review. It does not certify compliance or
+            produce audit evidence.
+          </span>
+          <span title="Read the name slowly.">Why the name? Try reading it as wi<b>ZARD</b> of <b>OZ</b>.</span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

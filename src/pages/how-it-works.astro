@@ -1,0 +1,90 @@
+---
+import Base from "../layouts/Base.astro";
+
+import { stages } from "../lib/commands";
+
+---
+
+<Base
+  title="How it works"
+  description="The six stages of PolicyForge, from loading frameworks to asking questions, and the key command behind each."
+>
+  <main>
+    <section class="page-hero">
+      <div class="container">
+        <p class="eyebrow">How it works</p>
+        <h1>Six stages, from published frameworks to answers you can cite.</h1>
+        <p class="lede">
+          The first three stages use no AI at all — they are careful data work, and most of
+          the value. AI enters at stage four, and only to rework text it has been handed.
+        </p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        {
+          stages.map((s, i) => (
+            <div class="split">
+              <div class="split-head">
+                <span class="step-n">Stage {i + 1}</span>
+                <h2 style="font-size: 1.6rem;">{s.title}</h2>
+                <p class="muted">{s.summary}</p>
+              </div>
+              <dl class="cmd-list">
+                {s.cmds.filter(([name]) => s.key.includes(name)).map(([name, desc]) => (
+                  <div class="cmd">
+                    <dt>{name}</dt>
+                    <dd>{desc}</dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+          ))
+        }
+        <p class="table-note" style="margin-top: 2.5rem;">
+          These are the key commands at each stage. All {stages.reduce((n, s) => n + s.cmds.length, 0)}
+          are in the <a href="/docs/commands/">command reference</a>, including a loader for
+          each framework.
+        </p>
+      </div>
+    </section>
+
+    <section class="section sunk">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow">Three documents per topic</p>
+          <h2>One merged list of requirements, written up three ways.</h2>
+        </div>
+        <div class="grid">
+          <div class="card">
+            <h3>Policy</h3>
+            <p>
+              The commitments, in plain language for everyone in the organization. Short, and
+              free of framework citations.
+            </p>
+          </div>
+          <div class="card">
+            <h3>Standard</h3>
+            <p>
+              The full technical requirements, with every statement tagged to the controls it
+              came from. This is what an assessor reads.
+            </p>
+          </div>
+          <div class="card">
+            <h3>Procedure</h3>
+            <p>
+              Step-by-step instructions for the people doing the work, still tagged to their
+              sources.
+            </p>
+          </div>
+        </div>
+        <p class="table-note">
+          All three come from the same merged list, so they cannot drift out of step with
+          each other. Markdown is the only format written; Confluence pages are converted from
+          it, so there is one version of the truth.
+        </p>
+      </div>
+    </section>
+  </main>
+</Base>

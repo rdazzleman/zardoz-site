@@ -1,0 +1,35 @@
+---
+import Doc from "../../layouts/Doc.astro";
+import { stages } from "../../lib/commands";
+
+const total = stages.reduce((n, s) => n + s.cmds.length, 0);
+const frontmatter = {
+  title: "Command reference",
+  description: `All ${total} policyforge commands in 1.7.0, by stage.`,
+  source: "the site's own list (src/lib/commands.ts), checked against the 1.7.0 command line",
+  licensedCommands: ["etl-govramp", "etl-hitrust", "etl-soc2-tsc"],
+};
+---
+
+<Doc frontmatter={frontmatter}>
+  <p>
+    Every <code>policyforge</code> command in 1.7.0, by the stage of the pipeline it belongs
+    to. <code>policyforge &lt;command&gt; --help</code> gives each one's options.
+  </p>
+  {
+    stages.map((s) => (
+      <>
+        <h2 id={s.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}>{s.title}</h2>
+        <p>{s.summary}</p>
+        <dl class="cmd-list">
+          {s.cmds.map(([name, desc]) => (
+            <div class="cmd">
+              <dt>{name}</dt>
+              <dd>{desc}</dd>
+            </div>
+          ))}
+        </dl>
+      </>
+    ))
+  }
+</Doc>

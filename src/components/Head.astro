@@ -1,0 +1,26 @@
+---
+/**
+ * The answering voice's avatar: a small carved stone head that hovers.
+ * Drawn from scratch as plain geometry (a faceted mask, a brow, eye slits
+ * and a mouth slot) — deliberately abstract, with no likeness of any
+ * existing character, sculpture or film prop. The PolicyForge shell already
+ * greets people with a floating head; this is the site's version of it.
+ */
+interface Props {
+  class?: string;
+}
+const { class: extra = "" } = Astro.props;
+---
+
+<svg class={`head ${extra}`} viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+  <ellipse class="shadow" cx="24" cy="45.6" rx="9" ry="1.5"></ellipse>
+  <g class="body">
+    <path class="stone" d="M14 4h20l6 12-2 14-7 9H17l-7-9-2-14z"></path>
+    <path class="facet" d="M24 4h10l6 12-2 14-7 9h-7z" opacity="0.55"></path>
+    <rect class="feature" x="12.5" y="15" width="23" height="2.4" rx="1.2"></rect>
+    <rect class="feature" x="15" y="20.5" width="7" height="2.4" rx="1.2"></rect>
+    <rect class="feature" x="26" y="20.5" width="7" height="2.4" rx="1.2"></rect>
+    <rect class="feature" x="23" y="23" width="2" height="7" rx="1"></rect>
+    <rect class="feature" x="18" y="32.5" width="12" height="3" rx="1.5"></rect>
+  </g>
+</svg>

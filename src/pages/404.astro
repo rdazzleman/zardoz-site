@@ -1,0 +1,21 @@
+---
+import Base from "../layouts/Base.astro";
+import Head from "../components/Head.astro";
+---
+
+<Base title="No answer" description="There is no page at this address.">
+  <main class="nothing">
+    <div class="container">
+      <Head />
+      <p class="eyebrow">404</p>
+      <h1>No answer.</h1>
+      <p class="lede">
+        There’s no page at this address, and we won’t pretend there is.
+      </p>
+      <div class="btn-row" style="justify-content: center;">
+        <a class="btn btn-primary" href="/">Go to the homepage</a>
+        <a class="btn btn-secondary" href="/frameworks">See the frameworks</a>
+      </div>
+    </div>
+  </main>
+</Base>

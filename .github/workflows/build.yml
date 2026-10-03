@@ -1,0 +1,34 @@
+name: Build
+
+# Runs on every push and PR, private or public, so a broken build is caught
+# before launch rather than at the first deploy.
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Every page built
+        run: |
+          for p in index how-it-works/index frameworks/index models/index quickstart/index docs/index 404; do
+            test -s "dist/$p.html" || { echo "missing dist/$p.html"; exit 1; }
+          done
+          # Every docs source page, derived from the sources rather than listed.
+          for f in src/pages/docs/*.md; do
+            n=$(basename "$f" .md); [ "$n" = index ] && continue
+            test -s "dist/docs/$n/index.html" || { echo "missing dist/docs/$n/index.html"; exit 1; }
+          done
+          # The services page was removed on purpose (2026-10-03).
+          test ! -e dist/consultants/index.html || { echo "dist/consultants exists: the services page is back"; exit 1; }

@@ -1,0 +1,83 @@
+---
+/**
+ * Layout for the documentation pages under /docs. Their text is the
+ * PolicyForge 1.7.0 README, moved here when the README was cut down to
+ * install and quick start. Each page names the README lines it came from.
+ */
+import Base from "./Base.astro";
+import { docsGroups, docsOrder } from "../lib/docsGroups";
+import { site } from "../lib/site";
+
+const { frontmatter } = Astro.props;
+
+// Two docs pages cover ground the site's own Quick start also covers. Say which is
+// which, so a reader doesn't meet two competing versions.
+const pointers: Record<string, string> = {
+  "/docs/quickstart/": "The short, six-step version is the site's Quick start. This page is the longer walkthrough, with what each step writes and what a full set has cost.",
+  "/docs/setup/": "Just want to try it? The site's Quick start is the short version. This page also covers optional extras and setting up a clone to work on PolicyForge itself.",
+};
+const here = Astro.url.pathname.replace(/\/?$/, "/");
+const index = docsOrder.findIndex((d) => d.href === here);
+const prev = index > 0 ? docsOrder[index - 1] : undefined;
+const next = index >= 0 && index < docsOrder.length - 1 ? docsOrder[index + 1] : undefined;
+---
+
+<Base title={frontmatter.title} description={frontmatter.description}>
+  <main class="docs">
+    <div class="container docs-grid">
+      <nav class="docs-nav" aria-label="Documentation">
+        <details class="docs-toc" open>
+          <summary>
+            <span class="eyebrow">Docs</span>
+            <span class="muted small">PolicyForge 1.7.0</span>
+          </summary>
+          {
+            docsGroups.map((g) => (
+              <div class="docs-group">
+                <p class="docs-group-label">{g.label}</p>
+                <ol>
+                  {g.links.map((d) => (
+                    <li>
+                      <a href={d.href} aria-current={d.href === here ? "page" : undefined}>
+                        {d.title}
+                      </a>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            ))
+          }
+        </details>
+      </nav>
+      <article class="doc-prose" data-source={frontmatter.source}>
+        <h1>{frontmatter.title}</h1>
+        {
+          pointers[here] && (
+            <p class="callout">
+              {pointers[here]} <a href="/quickstart">Go to the Quick start →</a>
+            </p>
+          )
+        }
+        {
+          frontmatter.licensedCommands?.length > 0 && (
+            <div class="callout warn">
+              <p>
+                <strong>{frontmatter.licensedCommands.map((c) => `policyforge ${c}`).join(", ")}</strong>{" "}
+                {frontmatter.licensedCommands.length > 1 ? "need" : "needs"} the licensed-framework
+                plugin, which is distributed separately from the open-source tool:{" "}
+                <a href={site.pluginHref}>contact us about the plugin</a> at {site.contactEmail}.
+                Without it, each command says so, and where PolicyForge can draft a reader for
+                your own export, it points you to <code>policyforge generate-parser</code>.
+              </p>
+            </div>
+          )
+        }
+        <slot />
+        <footer class="doc-pager">
+          {prev ? <a href={prev.href}>← {prev.title}</a> : <span />}
+          {next ? <a href={next.href}>{next.title} →</a> : <span />}
+        </footer>
+      </article>
+    </div>
+  </main>
+</Base>

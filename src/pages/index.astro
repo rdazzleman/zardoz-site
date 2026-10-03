@@ -1,0 +1,409 @@
+---
+import Base from "../layouts/Base.astro";
+import Head from "../components/Head.astro";
+import { site } from "../lib/site";
+
+// Straight from NIST's own OSCAL release of SP 800-171 Rev 3, which names the
+// 800-53 controls each requirement was derived from.
+const sourceControls = [
+  { id: "03.01.01", title: "Account Management", from: ["AC-02", "AC-02(03)", "AC-02(05)", "AC-02(13)"] },
+  { id: "03.05.03", title: "Multi-Factor Authentication", from: ["IA-02(01)", "IA-02(02)"] },
+  { id: "03.13.11", title: "Cryptographic Protection", from: ["SC-13"] },
+];
+
+const problems = [
+  {
+    title: "The same requirement, written many ways",
+    body: "HIPAA, HITRUST and NIST 800-53 overlap heavily, but each phrases things its own way. Without a crosswalk, every overlap becomes one more document to keep in sync.",
+  },
+  {
+    title: "Written for the auditor",
+    body: "Frameworks are organized by control family because that is how they are assessed. Your engineers are organized by team. Documents in the auditor's shape are hard to act on.",
+  },
+  {
+    title: "Nobody owns it",
+    body: "When a requirement spans three control families, it spans three teams — and it ends up owned by none of them.",
+  },
+];
+
+const steps = [
+  {
+    title: "Load your frameworks",
+    body: "Thirteen public frameworks come included, from NIST 800-53 and CSF 2.0 to the HIPAA rules and FedRAMP. HITRUST, GovRAMP and SOC 2 are bring-your-own, under your own licence.",
+  },
+  {
+    title: "Map them together",
+    body: "Control frameworks are cross-referenced onto NIST 800-53, so one requirement stated several ways is recognised as one. No AI is involved in this step.",
+  },
+  {
+    title: "Draft by topic",
+    body: "For each topic — access review, incident response, backups — you get a Policy, a Standard and a Procedure, owned by one team.",
+  },
+  {
+    title: "Publish and ask",
+    body: "Publish to Confluence or your wiki. Then ask questions of the result and get answers that cite their sources.",
+  },
+];
+---
+
+<Base
+  title="Zardoz"
+  description="A policy generator that shows its work. PolicyForge, an open-source tool, turns NIST, HIPAA, FedRAMP, HITRUST and more into one set of policies, standards and procedures — each topic owned by one team, every requirement traced to its source."
+>
+  <main>
+    <!-- Hero -->
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <a class="pill" href="/frameworks">
+            <span class="pill-tag">New in 1.7</span>
+            NIST CSF 2.0 and the HIPAA Privacy Rule →
+          </a>
+          <p class="eyebrow">For teams answering to more than one framework</p>
+          <h1>Security policies your engineers can follow, and your assessor can trace.</h1>
+          <p class="lede">
+            PolicyForge turns overlapping frameworks (NIST 800-53, 800-171 and CSF 2.0, HIPAA,
+            FedRAMP, HITRUST) into one set of policies, standards and procedures. Each topic
+            has one owning team, and every requirement names the control it came from.
+          </p>
+          <div class="btn-row">
+            <a class="btn btn-primary" href="/quickstart">Quick start</a>
+            <a class="btn btn-secondary" href={site.github}>View on GitHub</a>
+          </div>
+          <p class="hero-note">
+            Open source under Apache-2.0. It runs on your own machine, with your own AI key
+            or a local model. Its question-answering shell is called Zardoz.
+          </p>
+        </div>
+
+        <figure class="doc" style="margin: 0;" aria-label="Example of a drafted Standard">
+          <div class="doc-head">
+            <div>
+              <div class="doc-kind">Standard · example output</div>
+              <div class="doc-title">Identity Lifecycle &amp; Access Review</div>
+            </div>
+            <span class="owner">Owner: Platform Engineering</span>
+          </div>
+          <div class="doc-body">
+            <div class="req">
+              <span class="req-n">4.1</span>
+              <p>
+                Accounts are created only through the <span class="slot">[Identity Provider]</span>,
+                after the account owner's manager approves a documented request.
+              </p>
+              <div class="cites">
+                <span class="chip">NIST 800-53 AC-2</span>
+                <span class="chip">HIPAA 164.308(a)(4)(ii)(C)</span>
+              </div>
+            </div>
+            <div class="req">
+              <span class="req-n">4.2</span>
+              <p>
+                Access to systems holding patient data is reviewed every
+                <span class="slot">[organization-defined frequency]</span> by the owning team.
+              </p>
+              <div class="cites">
+                <span class="chip">NIST 800-53 AC-2(j)</span>
+                <span class="chip">HIPAA 164.308(a)(4)</span>
+              </div>
+            </div>
+            <div class="req">
+              <span class="req-n">4.3</span>
+              <p>
+                Access is removed within
+                <span class="slot">[organization-defined time period]</span> of a person
+                leaving the organization.
+              </p>
+              <div class="cites">
+                <span class="chip">NIST 800-53 PS-4</span>
+                <span class="chip">HIPAA 164.308(a)(3)(ii)(C)</span>
+              </div>
+            </div>
+          </div>
+          <figcaption class="doc-foot">
+            <span class="legend"><i style="background: var(--accent-soft); outline: 1px solid var(--accent);"></i>Source control</span>
+            <span class="legend"><i style="background: var(--warn-soft); outline: 1px solid var(--warn);"></i>Decision still yours to make</span>
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- Frameworks strip -->
+    <div class="strip">
+      <div class="container">
+        <span class="strip-label">Works with</span>
+        <span class="fw">NIST 800-53 Rev 5</span>
+        <span class="fw">NIST 800-171 Rev 3</span>
+        <span class="fw">NIST CSF 2.0<span class="new-tag">New</span></span>
+        <span class="fw">HIPAA Security and Privacy Rules</span>
+        <span class="fw">FedRAMP</span>
+        <span class="fw">NIST AI RMF</span>
+        <span class="fw">HITRUST CSF and SOC 2 <small>bring your own</small></span>
+        <a class="fw" href="/frameworks" style="text-decoration: none;">All 17 →</a>
+      </div>
+    </div>
+
+    <!-- Highlight: 800-53 and 800-171 -->
+    <section class="section sunk" id="nist-800-171">
+      <div class="container feature-grid">
+        <div class="section-head" style="margin-bottom: 0;">
+          <p class="eyebrow">NIST 800-171 Rev 3</p>
+          <h2>NIST 800-53 and 800-171, in one program.</h2>
+          <p class="lede">
+            If you handle Controlled Unclassified Information under a federal contract or
+            grant, 800-171 comes with the work. PolicyForge includes Revision 3 alongside 800-53,
+            and links the two using the mapping NIST itself publishes.
+          </p>
+          <ul class="ticks">
+            <li>
+              <span>
+                <strong>All 97 current requirements</strong>, taken from NIST’s official
+                machine-readable release.
+              </span>
+            </li>
+            <li>
+              <span>
+                <strong>Cited under their own names</strong> — <code>NIST 800-171 03.01.01</code>
+                and <code>NIST 800-53 AC-2</code>, never an ambiguous “NIST” — so a requirement
+                can’t land in the wrong framework.
+              </span>
+            </li>
+            <li>
+              <span>
+                <strong>Linked together.</strong> NIST names the 800-53 controls
+                behind every 800-171 requirement, and all 97 now carry those links — taken from
+                NIST’s own release, not drawn up by us.
+              </span>
+            </li>
+          </ul>
+          <p class="small muted">
+            Preparing for CMMC? Level 2 is currently assessed against Revision 2, which numbers
+            requirements differently. <a href="/frameworks#nist-800-171-row">Read this first.</a>
+          </p>
+        </div>
+
+        <div class="card map-card">
+          <div class="map-card-head">
+            <span class="doc-kind">From NIST’s own source data</span>
+            <strong>Every 800-171 requirement names its 800-53 source controls</strong>
+          </div>
+          {
+            sourceControls.map((r) => (
+              <div class="map-row">
+                <div class="map-from">
+                  <code>800-171 {r.id}</code>
+                  <span class="muted small">{r.title}</span>
+                </div>
+                <div class="map-to">
+                  <span class="arrow">derived from</span>
+                  {r.from.map((c) => (
+                    <span class="chip">800-53 {c}</span>
+                  ))}
+                </div>
+              </div>
+            ))
+          }
+          <div class="map-card-foot">3 of 97 shown. Source: NIST SP 800-171 Rev 3, OSCAL edition.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Problem -->
+    <section class="section">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow">The problem</p>
+          <h2>Overlapping frameworks describe the same controls in different words.</h2>
+          <p class="lede">
+            If you answer to more than one of them, you end up writing — and maintaining —
+            the same policy over and over.
+          </p>
+        </div>
+        <div class="grid">
+          {
+            problems.map((p) => (
+              <div class="card">
+                <h3>{p.title}</h3>
+                <p>{p.body}</p>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- How it works -->
+    <section class="section sunk">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow">How it works</p>
+          <h2>From frameworks to finished documents, in one pass.</h2>
+        </div>
+        <ol class="steps" style="list-style: none; padding: 0;">
+          {
+            steps.map((s, i) => (
+              <li class="step">
+                <span class="step-n">Step {i + 1}</span>
+                <h3>{s.title}</h3>
+                <p>{s.body}</p>
+              </li>
+            ))
+          }
+        </ol>
+        <a class="more-link" href="/how-it-works">See everything it does →</a>
+      </div>
+    </section>
+
+    <!-- Ask -->
+    <section class="section band">
+      <div class="container band-grid">
+        <div class="section-head" style="margin-bottom: 0;">
+          <p class="eyebrow">Ask it questions</p>
+          <h2>An oracle that shows its work.</h2>
+          <p class="lede">
+            Ask about your program in plain language. Zardoz answers from your own documents
+            and cites the exact section and control — and when your documents don’t settle a
+            question, it tells you so instead of guessing.
+          </p>
+        </div>
+        <div class="chat">
+          <div class="chat-label">Example conversation</div>
+          <div class="msg q">
+            <span class="who">You</span>
+            <p>What’s our access review cadence?</p>
+          </div>
+          <div class="msg">
+            <span class="who"><Head />Zardoz</span>
+            <p>
+              Access to systems holding patient data is reviewed every
+              <span class="slot">[organization-defined frequency]</span> by the owning team.
+              That value hasn’t been decided yet, so it stays marked until someone sets it.
+            </p>
+            <div class="cites" style="grid-column: auto; margin-top: 0.2rem;">
+              <span class="chip">Access Review Standard §4.2</span>
+              <span class="chip">NIST 800-53 AC-2(j)</span>
+              <span class="chip">HIPAA 164.308(a)(4)</span>
+            </div>
+          </div>
+          <div class="msg q">
+            <span class="who">You</span>
+            <p>Does that satisfy HITRUST 11.a?</p>
+          </div>
+          <div class="msg refused">
+            <span class="who"><Head />Zardoz</span>
+            <p>
+              I can’t answer that from your documents. None of them cite HITRUST 11.a, and I
+              won’t assume coverage from a control that only looks similar.
+            </p>
+            <div class="cites" style="grid-column: auto; margin-top: 0.2rem;">
+              <span class="chip">No supporting source</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Trust -->
+    <section class="section">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow">Built to be checked</p>
+          <h2>Nothing hidden behind the curtain.</h2>
+          <p class="lede">Every line can be traced, and nothing is quietly made up.</p>
+        </div>
+        <div class="grid">
+          <div class="card">
+            <span class="icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l3 3v15H6z"></path><path d="M15 3v3h3M9 11h6M9 15h6"></path></svg>
+            </span>
+            <h3>Grounded in your framework text</h3>
+            <p>
+              The AI works only from the control text you load. It is never asked to recall
+              what a framework says from memory.
+            </p>
+          </div>
+          <div class="card">
+            <span class="icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a4 4 0 0 0 5.66 0l3-3a4 4 0 0 0-5.66-5.66l-1 1"></path><path d="M14 11a4 4 0 0 0-5.66 0l-3 3a4 4 0 0 0 5.66 5.66l1-1"></path></svg>
+            </span>
+            <h3>Every requirement cites its source</h3>
+            <p>
+              If an edit drops a citation, the check that runs before publishing fails. The
+              trail back to the framework can’t be lost by accident.
+            </p>
+          </div>
+          <div class="card">
+            <span class="icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4H5v16h3M16 4h3v16h-3M10 12h4"></path></svg>
+            </span>
+            <h3>Your decisions stay visible</h3>
+            <p>
+              Values only you can decide — review frequencies, tools, deadlines — stay marked
+              as open instead of being filled with a plausible guess.
+            </p>
+          </div>
+          <div class="card">
+            <span class="icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>
+            </span>
+            <h3>Your data stays yours</h3>
+            <p>
+              No account and no telemetry. By default, licensed catalogs like HITRUST go only
+              to a model running on your own machine, unless you declare a provider your own
+              data agreement covers.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Models / cost -->
+    <section class="section sunk">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow">Bring your own model</p>
+          <h2>Runs on the AI you choose — including one on your own laptop.</h2>
+          <p class="lede">
+            You hold the API key, so you see the bill. Here is what drafting a full set has
+            actually cost.
+          </p>
+        </div>
+        <div class="stats">
+          <div class="stat">
+            <span class="stat-n">$0.28</span>
+            <span class="stat-l">A full 20-topic set on a budget model (GLM&nbsp;5.3&nbsp;Flash)</span>
+          </div>
+          <div class="stat">
+            <span class="stat-n">~$12</span>
+            <span class="stat-l">The same set on Claude Sonnet, estimated from five measured topics</span>
+          </div>
+          <div class="stat">
+            <span class="stat-n">$0</span>
+            <span class="stat-l">With a local model — the default for licensed catalogs like HITRUST</span>
+          </div>
+        </div>
+        <p class="table-note">
+          These are measured costs, not a quality rating. <a href="/models">Models &amp; cost</a>
+          has the full breakdown and what it does and doesn’t tell you.
+        </p>
+      </div>
+    </section>
+
+    <!-- Closing -->
+    <section class="section">
+      <div class="container">
+        <div class="cta-panel">
+          <h2>Start with the program you already have.</h2>
+          <p class="lede">
+            Boilerplate policies, out-of-date ones, or none at all — and a contract that just
+            asked for HITRUST. That’s a good place to begin.
+          </p>
+          <div class="btn-row">
+            <a class="btn btn-primary" href={site.contactHref}>Contact us</a>
+            <a class="btn btn-secondary" href="/quickstart">Read the quick start</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</Base>
