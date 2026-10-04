@@ -10,24 +10,40 @@
  * (unauthenticated GitHub allows 60 requests/hour per IP, and Actions runners
  * share addresses). Keep it current-ish, but it is a safety net, not the source.
  */
-const FALLBACK = "v1.6.1";
+const FALLBACK = "v1.7.0";
 
+const API = "https://api.github.com/repos/rdazzleman/policyforge";
+const HEADERS = { Accept: "application/vnd.github+json", "User-Agent": "zardoz-io-site" };
+const SEMVER = /^v(\d+)\.(\d+)\.(\d+)$/;
+
+/** The newest vX.Y.Z tag, by version number rather than by API order. */
+function newest(tags: string[]): string | undefined {
+  const parsed = tags
+    .map((t) => [t, SEMVER.exec(t)] as const)
+    .filter((x): x is readonly [string, RegExpExecArray] => x[1] !== null)
+    .map(([t, m]) => [t, Number(m[1]), Number(m[2]), Number(m[3])] as const);
+  parsed.sort((a, b) => b[1] - a[1] || b[2] - a[2] || b[3] - a[3]);
+  return parsed[0]?.[0];
+}
+
+/**
+ * A GitHub Release if there is one, else the newest version tag. The public
+ * repository can carry tags without Release objects (1.7.0 was pushed as a tag
+ * only), and the pipx line installs from a tag, so a tag is what has to exist.
+ */
 export async function latestVersion(): Promise<string> {
   try {
-    const res = await fetch(
-      "https://api.github.com/repos/rdazzleman/policyforge/releases/latest",
-      {
-        headers: {
-          Accept: "application/vnd.github+json",
-          "User-Agent": "zardoz-io-site",
-        },
-      },
-    );
+    const rel = await fetch(`${API}/releases/latest`, { headers: HEADERS });
+    if (rel.ok) {
+      const body = (await rel.json()) as { tag_name?: unknown };
+      if (typeof body.tag_name === "string" && SEMVER.test(body.tag_name)) return body.tag_name;
+    }
+    const res = await fetch(`${API}/tags?per_page=100`, { headers: HEADERS });
     if (!res.ok) return FALLBACK;
-    const body = (await res.json()) as { tag_name?: unknown };
-    return typeof body.tag_name === "string" && /^v\d/.test(body.tag_name)
-      ? body.tag_name
-      : FALLBACK;
+    const tags = ((await res.json()) as { name?: unknown }[])
+      .map((t) => t.name)
+      .filter((n): n is string => typeof n === "string");
+    return newest(tags) ?? FALLBACK;
   } catch {
     return FALLBACK;
   }
