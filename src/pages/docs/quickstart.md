@@ -49,8 +49,8 @@ lists the keys) and generate again. What to do next — the other two tiers,
 publishing to Confluence, asking questions of the result — is in the sections
 below.
 
-**What a full set costs.** Twenty topics at four documents each, measured on
-1.2.1 (MEASUREMENTS.md, epoch 21): **$0.28 and 103 minutes on
+**What a full set costs.** Twenty topics at four documents each, measured in
+MEASUREMENTS.md (epoch 21): **$0.28 and 103 minutes on
 `glm-5.3-flash`**; on `claude-sonnet-5`, five topics cost $3.09, so a full
 set extrapolates to **about $12** — an order of magnitude, not a quote, since
 those five are the first in the registry rather than a random sample. No eval

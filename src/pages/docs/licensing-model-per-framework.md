@@ -148,7 +148,7 @@ Content is classified by who may hold it — `public-domain` (NIST, HIPAA),
 `licensed` (a MyCSF or GovRAMP export, and anything under `local_content/`).
 A catalog the licensed ETLs write also carries `"licence": "licensed"` in the
 file itself, so it stays licensed wherever it's saved or moved. Where a
-catalog's path and its file disagree, the stricter class wins (#459). The
+catalog's path and its file disagree, the stricter class wins. The
 rule is a ceiling per content class, and only one class is restricted:
 
 ```
@@ -306,7 +306,7 @@ spend-only meter misses. And `$0.0000` and `unpriced` are different answers,
 because a local model is genuinely free and a provider that does not price
 its calls is unknown.
 
-**A billed cost and an estimated one are told apart too** (#87). Each call
+**A billed cost and an estimated one are told apart too**. Each call
 records `cost_source`: `provider` when the vendor reported what it charged,
 `estimate` when LiteLLM priced the tokens from its pinned price table because
 the vendor didn't say. On a chat call only OpenRouter reports its own cost

@@ -156,7 +156,7 @@ requirement statements, levels, and which authoritative sources its mappings
 reach. **Nothing is written** unless you pass `--out`, and `--out` refuses
 any path under `data/frameworks/` outright, and any path the model boundary
 would not treat as licensed, whatever the flags: write under
-`local_content/` (#459). It also refuses any path git would not ignore
+`local_content/`. It also refuses any path git would not ignore
 unless your config declares `frameworks.allow_licensed_in_repo`.
 
 The HITRUST loader is part of the licensed-framework plugin, which is
@@ -267,7 +267,7 @@ GovRAMP Rev 5 (<version>) Moderate
 
 **Nothing is written** unless you pass `--out`, and `--out` refuses any path
 under `data/frameworks/` outright, and any path the model boundary would not
-treat as licensed, whatever the flags: write under `local_content/` (#459).
+treat as licensed, whatever the flags: write under `local_content/`.
 It also refuses any path git would not ignore unless your config declares
 `frameworks.allow_licensed_in_repo`. Same gate as `etl-hitrust`.
 

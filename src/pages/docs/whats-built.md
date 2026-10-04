@@ -45,8 +45,8 @@ What already exists, kept as the record of what the prose above refers to.
   otherwise it is LiteLLM's estimate from the price table bundled with the installed
   LiteLLM, plus PolicyForge's small override table (`llm/litellm_map.py`). The table is
   pinned: PolicyForge never downloads a newer one at startup, so estimates age with the
-  LiteLLM version and change only when it is bumped (#79). The log records which it was,
-  and every display labels an estimate as one (#87).
+  LiteLLM version and change only when it is bumped. The log records which it was,
+  and every display labels an estimate as one.
   Install with `pip install "policyforge[litellm]"`
 - [x] `POLICYFORGE_CONFIG` — names a config file to use instead of `config/config.yaml`,
   so a second provider can be run against the same working tree without editing, and
