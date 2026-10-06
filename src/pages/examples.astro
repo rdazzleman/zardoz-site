@@ -1,0 +1,261 @@
+---
+import Base from "../layouts/Base.astro";
+import Head from "../components/Head.astro";
+import { examples, modelByKey, stamp } from "../lib/examples";
+
+const pending = examples.status === "pending";
+const standIns = examples.demo.filter((t) => t.standIn).length;
+const money = (v: number | null) => (v === null ? "—" : v === 0 ? "$0" : `$${v.toFixed(2)}`);
+const num = (v: number | null) => (v === null ? "—" : String(v));
+---
+
+<Base
+  title="Examples"
+  description="PolicyForge run for real on public frameworks with three AI models, one on a laptop: the documents as generated, what each run cost, and questions answered from them."
+>
+  <main>
+    <section class="page-hero">
+      <div class="container">
+        <p class="eyebrow">Examples</p>
+        <h1>Real output, unedited.</h1>
+        <p class="lede">
+          We ran PolicyForge on public-framework topics with three AI models, one on a laptop and
+          two hosted. Every document is published exactly as it was generated, with its model,
+          version and cost.
+        </p>
+        {
+          pending && (
+            <p class="callout warn">
+              <strong>Preview.</strong> The example runs haven't happened yet, so this page shows
+              where each piece will go. Nothing on it is output yet
+              {standIns > 0 && <>, apart from {standIns} demo answers borrowed from the PolicyForge docs and marked as such</>}.
+            </p>
+          )
+        }
+        <div class="btn-row">
+          {
+            examples.repoUrl ? (
+              <a class="btn btn-primary" href={examples.repoUrl}>Browse the documents on GitHub</a>
+            ) : (
+              <span class="btn btn-primary is-off" aria-disabled="true">Browse the documents on GitHub</span>
+            )
+          }
+          {
+            examples.confluenceUrl ? (
+              <a class="btn btn-secondary" href={examples.confluenceUrl}>See them in Confluence</a>
+            ) : (
+              <span class="btn btn-secondary is-off" aria-disabled="true">See them in Confluence</span>
+            )
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow">Same control, three models</p>
+          <h2>One requirement, as each model wrote it.</h2>
+          <p class="lede">
+            Each draft is grounded in the same framework text and cites the same controls. What
+            changes is the prose, and the bill.
+          </p>
+        </div>
+        <div class="compare">
+          {
+            examples.comparison.drafts.map((d) => {
+              const m = modelByKey[d.model];
+              return (
+                <figure class="doc" style="margin: 0;">
+                  <div class="doc-head">
+                    <div>
+                      <div class="doc-kind">{m.label} · {m.where}</div>
+                      <div class="doc-title">{examples.comparison.section}</div>
+                    </div>
+                    <span class="owner">{money(m.costUsd)} for the set</span>
+                  </div>
+                  <div class="doc-body">
+                    {d.text ? (
+                      <p>{d.text}</p>
+                    ) : (
+                      <p class="pending-text">This model's paragraph goes here, copied from its Standard.</p>
+                    )}
+                    <div class="cites" style="grid-column: auto; margin-top: 0;">
+                      {examples.comparison.controls.map((c) => (
+                        <span class="chip">{c}</span>
+                      ))}
+                    </div>
+                  </div>
+                  <figcaption class="doc-foot">
+                    <span>{stamp(m)}</span>
+                  </figcaption>
+                </figure>
+              );
+            })
+          }
+        </div>
+
+        <div class="table-wrap" style="margin-top: 2.75rem;">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Model</th>
+                <th scope="col">Runs</th>
+                <th scope="col">Documents</th>
+                <th scope="col">Cost</th>
+                <th scope="col">Time</th>
+                <th scope="col">Check warnings</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                examples.models.map((m) => (
+                  <tr>
+                    <th scope="row">{m.label} <span class="muted small">{m.id}</span></th>
+                    <td>{m.where}</td>
+                    <td>{num(m.documents)}</td>
+                    <td>{money(m.costUsd)}{m.costSource && <span class="muted small"> {m.costSource}</span>}</td>
+                    <td>{m.minutes === null ? "—" : `${m.minutes} min`}</td>
+                    <td>{num(m.warnings)}</td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+        <p class="table-note">
+          Every figure comes from the run's own log. A hosted model's cost is marked billed when the
+          provider reported it, and estimated otherwise. The local model costs nothing to run, and
+          nothing it read left the machine.
+        </p>
+      </div>
+    </section>
+
+    <section class="section sunk">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow">One topic, top to bottom</p>
+          <h2>{examples.tree.topic}: the whole set.</h2>
+          <p class="lede">
+            Each topic is three documents, from what the organization commits to down to who does
+            what. Read them where they'd actually live.
+          </p>
+        </div>
+        <ol class="tier-list">
+          {
+            examples.tree.docs.map((d) => (
+              <li>
+                <span class="tier">{d.tier}</span>
+                <span class="muted">{d.says}</span>
+                <span class="tier-links small">
+                  {examples.repoUrl ? <a href={examples.repoUrl}>GitHub</a> : <span>GitHub</span>}
+                  {" · "}
+                  {examples.confluenceUrl ? <a href={examples.confluenceUrl}>Confluence</a> : <span>Confluence</span>}
+                </span>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </section>
+
+    <section class="section band" id="ask">
+      <div class="container band-grid">
+        <div class="section-head" style="margin-bottom: 0;">
+          <p class="eyebrow">Ask Zardoz</p>
+          <h2>Ask it about these policies.</h2>
+          <p class="lede">
+            Every answer cites the paragraph it came from, or Zardoz says the documents don't cover
+            it. These are real questions with the answers it gave, recorded once and shown as is.
+          </p>
+        </div>
+        <div class="chat demo">
+          <div class="chat-label">Pick a question</div>
+          {
+            examples.demo.map((t, i) => (
+              <details class="turn" open={i === 0} name="ask">
+                <summary>
+                  <span class="q-text">{t.question}</span>
+                  <span class="q-shows">{t.shows}</span>
+                </summary>
+                <div class={`msg ${t.kind === "refusal" ? "refused" : ""}`}>
+                  <span class="who"><Head />Zardoz</span>
+                  {t.note && <p class="turn-note">({t.note})</p>}
+                  {t.answer ? (
+                    <p class={t.kind === "report" ? "report" : ""}>{t.answer}</p>
+                  ) : (
+                    <p class="pending-text">The real answer goes here, from the recorded session.</p>
+                  )}
+                  {t.cites.length > 0 && (
+                    <div class="cites" style="grid-column: auto; margin-top: 0;">
+                      {t.cites.map((c, n) => (
+                        <span class="chip">[{n + 1}] {c}</span>
+                      ))}
+                    </div>
+                  )}
+                  {t.standIn && <p class="stand-in">Stand-in from the PolicyForge docs, over a different document set.</p>}
+                </div>
+              </details>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="cta-panel">
+          <div>
+            <h2>Run it on your own program.</h2>
+            <p class="muted">
+              The same commands made every document on this page. Start with the frameworks you
+              already answer to.
+            </p>
+          </div>
+          <div class="btn-row">
+            <a class="btn btn-primary" href="/quickstart">Quick start</a>
+            <a class="btn btn-secondary" href="/how-it-works">How it works</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</Base>
+
+<style>
+  .compare { display: grid; gap: 1.25rem; }
+  @media (min-width: 62rem) { .compare { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .compare .doc-body p { line-height: 1.55; }
+  .compare .doc-foot { font-size: 0.75rem; }
+  .pending-text { color: var(--muted); font-style: italic; }
+  .is-off { opacity: 0.45; cursor: not-allowed; }
+
+  .tier-list { list-style: none; padding: 0; display: grid; gap: 0.75rem; max-width: 50rem; }
+  .tier-list li {
+    display: grid; gap: 0.25rem 1rem; align-items: baseline;
+    background: var(--bg); border: 1px solid var(--rule); border-radius: var(--radius);
+    padding: 0.9rem 1.1rem;
+  }
+  .tier-list li:nth-child(2) { margin-left: 1.5rem; }
+  .tier-list li:nth-child(3) { margin-left: 3rem; }
+  @media (min-width: 48rem) { .tier-list li { grid-template-columns: 6.5rem minmax(0, 1fr) auto; } }
+  .tier { font-family: var(--serif); font-weight: 600; font-size: 1.0625rem; }
+  .tier-links span { color: var(--muted); }
+
+  .demo .turn { border-bottom: 1px solid var(--band-rule); }
+  .demo .turn:last-child { border-bottom: 0; }
+  .demo summary {
+    list-style: none; cursor: pointer; display: grid; gap: 0.15rem;
+    padding: 0.95rem 1.4rem; font-weight: 600;
+  }
+  .demo summary::-webkit-details-marker { display: none; }
+  .demo summary::before { content: "You"; font-size: 0.6875rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--band-muted); font-weight: 600; }
+  .demo summary:hover .q-text, .demo summary:focus-visible .q-text { color: var(--band-accent); }
+  .demo .q-shows { font-size: 0.8125rem; font-weight: 400; color: var(--band-muted); }
+  .demo .turn[open] summary { padding-bottom: 0.4rem; }
+  .demo .msg { border-bottom: 0; padding-top: 0.4rem; }
+  .demo .turn-note { font: 0.8125rem/1.5 var(--mono); color: var(--band-muted); }
+  .demo .pending-text { color: var(--band-muted); }
+  .demo .stand-in { font-size: 0.75rem; color: var(--band-warn); }
+  .demo .report { font-family: var(--mono); font-size: 0.875rem; white-space: pre-wrap; }
+</style>

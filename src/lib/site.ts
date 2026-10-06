@@ -10,6 +10,7 @@ export const site = {
 
 export const nav = [
   { href: "/how-it-works", label: "How it works" },
+  { href: "/examples", label: "Examples" },
   { href: "/frameworks", label: "Frameworks" },
   { href: "/models", label: "Models & cost" },
   { href: "/quickstart", label: "Quick start" },

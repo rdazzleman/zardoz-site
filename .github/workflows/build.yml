@@ -22,7 +22,7 @@ jobs:
       - run: npm run build
       - name: Every page built
         run: |
-          for p in index how-it-works/index frameworks/index models/index quickstart/index docs/index 404; do
+          for p in index how-it-works/index examples/index frameworks/index models/index quickstart/index docs/index 404; do
             test -s "dist/$p.html" || { echo "missing dist/$p.html"; exit 1; }
           done
           # Every docs source page, derived from the sources rather than listed.
