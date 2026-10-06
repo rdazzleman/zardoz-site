@@ -159,6 +159,15 @@ On the corpus, not on the answer — at sync time somebody can still open the
 page, whereas the same warning stapled to an answer arrives too late to act
 on and teaches its reader to click past warnings.
 
+**A flagged page never reaches an answer.** It stays synced and the sync
+report still names it, but it is left out of what answers search, so its text
+is never sent to the model. Each answer says in one line how many documents
+were left out this way:
+
+```
+(1 synced document(s) left out of answers: the injection scanner flagged them. `policyforge zardoz sync` lists which.)
+```
+
 **It is not an imperative detector**, and that is the whole difficulty. A
 policy set is imperative end to end — "Accounts must be recertified
 quarterly", "Do not share credentials", "Revoke the badge" — so flagging
