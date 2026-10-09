@@ -73,6 +73,7 @@ const here = Astro.url.pathname.replace(/\/$/, "") || "/";
           </div>
           <div class="footer-links">
             {nav.map((n) => <a href={n.href}>{n.label}</a>)}
+            <a href="/trust">Security &amp; trust</a>
             <a href={site.github}>GitHub</a>
             <a href={site.contactHref}>{site.contactEmail}</a>
           </div>

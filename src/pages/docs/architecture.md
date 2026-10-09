@@ -44,7 +44,7 @@ and recorded after it returns:
   B["boundary&lt;br/&gt;may this content go&lt;br/&gt;to this provider?"] --&gt; LLM
   LLM --&gt; L["ledger&lt;br/&gt;provider, model, subject,&lt;br/&gt;tokens, cost, prompt hash"]
 
-  classDef gate fill:#fff3cd,stroke:#8a6d3b,color:#000
+  classDef gate fill:#fff3cd,stroke:#8a6d3b,color:black
   class B,L gate</code></pre>
 
 </details>

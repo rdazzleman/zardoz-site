@@ -1,0 +1,79 @@
+---
+/**
+ * Layout for the security and trust pages under /trust, and /compare. Their text
+ * is PolicyForge's own repository documents (security architecture, commitments,
+ * measurements and the rest), moved here from the repo's docs/ folder. Each page
+ * names the file and lines it came from. The text lives here and nowhere else.
+ */
+import Base from "./Base.astro";
+import { trustNav } from "../lib/trust";
+import { site } from "../lib/site";
+
+const { frontmatter } = Astro.props;
+
+const here = Astro.url.pathname.replace(/\/?$/, "/");
+const index = trustNav.findIndex((d) => d.href === here);
+const prev = index > 0 ? trustNav[index - 1] : undefined;
+const next = index >= 0 && index < trustNav.length - 1 ? trustNav[index + 1] : undefined;
+const note = frontmatter.note;
+---
+
+<Base title={frontmatter.title} description={frontmatter.description}>
+  <main class="docs">
+    <div class="container docs-grid">
+      <nav class="docs-nav" aria-label="Security and trust">
+        <details class="docs-toc" open>
+          <summary>
+            <span class="eyebrow">Security &amp; trust</span>
+            <span class="muted small">PolicyForge {frontmatter.release}</span>
+          </summary>
+          <div class="docs-group">
+            <ol>
+              {
+                trustNav.map((d) => (
+                  <li>
+                    <a href={d.href} aria-current={d.href === here ? "page" : undefined}>
+                      {d.title}
+                    </a>
+                  </li>
+                ))
+              }
+            </ol>
+          </div>
+        </details>
+      </nav>
+      <article class="doc-prose" data-source={frontmatter.source}>
+        <h1>{frontmatter.title}</h1>
+        <p class="muted small">
+          Describes PolicyForge {frontmatter.release}. Code and test links open the public repository at the release tag.
+        </p>
+        {
+          note && (
+            <p class="callout">
+              {note.text} <a href={note.href}>{note.linkText} →</a>
+            </p>
+          )
+        }
+        {
+          frontmatter.licensedCommands?.length > 0 && (
+            <div class="callout warn">
+              <p>
+                <strong>{frontmatter.licensedCommands.map((c) => `policyforge ${c}`).join(", ")}</strong>{" "}
+                {frontmatter.licensedCommands.length > 1 ? "need" : "needs"} the licensed-framework
+                plugin, which is distributed separately from the open-source tool:{" "}
+                <a href={site.pluginHref}>contact us about the plugin</a> at {site.contactEmail}.
+                Without it, each command says so, and where PolicyForge can draft a reader for
+                your own export, it points you to <code>policyforge generate-parser</code>.
+              </p>
+            </div>
+          )
+        }
+        <slot />
+        <footer class="doc-pager">
+          {prev ? <a href={prev.href}>← {prev.title}</a> : <span />}
+          {next ? <a href={next.href}>{next.title} →</a> : <span />}
+        </footer>
+      </article>
+    </div>
+  </main>
+</Base>

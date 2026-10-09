@@ -22,7 +22,7 @@ jobs:
       - run: npm run build
       - name: Every page built
         run: |
-          for p in index how-it-works/index examples/index frameworks/index models/index quickstart/index docs/index 404; do
+          for p in index how-it-works/index examples/index frameworks/index models/index quickstart/index docs/index trust/index compare/index 404; do
             test -s "dist/$p.html" || { echo "missing dist/$p.html"; exit 1; }
           done
           # Every docs source page, derived from the sources rather than listed.
@@ -30,5 +30,17 @@ jobs:
             n=$(basename "$f" .md); [ "$n" = index ] && continue
             test -s "dist/docs/$n/index.html" || { echo "missing dist/docs/$n/index.html"; exit 1; }
           done
+          # Every trust source page, the same way.
+          for f in src/pages/trust/*.md; do
+            n=$(basename "$f" .md); [ "$n" = index ] && continue
+            test -s "dist/trust/$n/index.html" || { echo "missing dist/trust/$n/index.html"; exit 1; }
+          done
           # The services page was removed on purpose (2026-10-03).
           test ! -e dist/consultants/index.html || { echo "dist/consultants exists: the services page is back"; exit 1; }
+      - name: Trust and compare pages
+        # The repository's guards over these documents (issue numbers, the plugin
+        # contact, session names) moved here with them, plus the release-tag pin.
+        # Each check must fail on a planted input before the real run counts.
+        run: |
+          python3 scripts/check_trust.py --self-test
+          python3 scripts/check_trust.py

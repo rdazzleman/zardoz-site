@@ -27,6 +27,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+      - name: The release the trust pages describe is published
+        # The /trust and /compare pages link to PolicyForge's code at a release tag.
+        # Until that tag exists those links 404, so nothing deploys: the pages go live
+        # with the release, never before. Every path they link must exist at the tag.
+        run: |
+          tag=$(sed -n 's/.*releaseTag: "\([^"]*\)".*/\1/p' src/lib/site.ts)
+          test -n "$tag" || { echo "no releaseTag in src/lib/site.ts"; exit 1; }
+          git clone --quiet --depth 1 --branch "$tag" https://github.com/rdazzleman/policyforge.git "$RUNNER_TEMP/tag"
+          python3 scripts/check_trust.py --verify-tree "$RUNNER_TEMP/tag"
       - name: Build
         uses: withastro/action@v6
         with:
