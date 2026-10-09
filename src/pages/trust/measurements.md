@@ -1,10 +1,11 @@
 ---
 layout: "../../layouts/Trust.astro"
 title: "Measurements"
-description: "PolicyForge 1.8.0 security and trust documentation: Measurements."
+description: "PolicyForge security and trust documentation: Measurements. Figures measured 2026-09-12 to 2026-09-29; not re-measured for 1.8.0."
 source: "MEASUREMENTS.md at PolicyForge commit 306eec67, lines 2-351, 2180-2364"
 release: "1.8.0"
 licensedCommands: []
+stamp: "Figures measured 2026-09-12 to 2026-09-29, each as the epoch that ran it records; not re-measured for 1.8.0."
 note: {"text": "The log of every configuration epoch, and the raw ledgers behind each figure, stay in the repository next to the code that produced them. This page is the method, the baseline and what the measurements found.", "linkText": "Read the epoch log", "href": "https://github.com/rdazzleman/policyforge/blob/v1.8.0/docs/measurements/epochs.md"}
 ---
 
@@ -14,8 +15,8 @@ Kept because it is the evidence behind the default model choice, the
 baseline any prompt change is measured against, and the record of which
 eval cases discriminate between models and which every model passes.
 
-**Read the epochs before comparing two numbers.** The prompts and the
-call-site budgets changed during the session that produced this file, and
+**Read the [epoch log](https://github.com/rdazzleman/policyforge/blob/v1.8.0/docs/measurements/epochs.md) before comparing two numbers.** The prompts and the
+call-site budgets changed during the session that produced this record, and
 a score from before a change is not comparable with one from after it.
 
 Reproduce any row with:
@@ -27,9 +28,9 @@ python scripts/eval_zardoz.py --model <litellm model string> \
 
 ______________________________________________________________________
 
-## What this file rests on — rewritten 2026-09-24
+## What this record rests on — rewritten 2026-09-24
 
-**Most of this file cannot be re-derived, and it says so section by
+**Most of this record cannot be re-derived, and it says so section by
 section.** The runs behind epochs 1–20, 22 and 23, the nine-model comparison
 and the 2026-09-13 baseline wrote their ledgers into session scratch
 directories that did not survive. Those sections are kept as they were
@@ -65,7 +66,7 @@ It is an eval-call rate, 27x below the synthesize mean ($0.0054 / $0.0002).
 ### What was not measured, and why
 
 - **Claude through its direct API.** Not authorised for this release (the
-  user, 2026-09-21). **Every Claude figure in this file went through
+  user, 2026-09-21). **Every Claude figure in this record went through
   OpenRouter.** The grounds differ in strength, strongest first:
 
   - **The configured model string**, for the two retained Claude runs.
@@ -104,7 +105,7 @@ It is an eval-call rate, 27x below the synthesize mean ($0.0054 / $0.0002).
   but every one through OpenRouter: a second provider *path* is still
   unmeasured.
 
-- **Eval-suite scores before epoch 25.** Every earlier score in this file
+- **Eval-suite scores before epoch 25.** Every earlier score in this record
   comes from a run whose results were not retained. Epoch 25's are retained. The 2026-09-18/19 ledgers record calls, not
   grades, so no score can be re-derived from them.
 
@@ -219,15 +220,17 @@ ______________________________________________________________________
 
 > **Source not retained** (2026-09-24): the ledger or results behind this section's figures did not survive, so they stand as recorded at the time and cannot be re-derived.
 
-After the budget, prompt and check fixes described in the epochs below.
+After the budget, prompt and check fixes described in the [epoch log](https://github.com/rdazzleman/policyforge/blob/v1.8.0/docs/measurements/epochs.md).
 Only these three models have been re-measured since; every other row in
-this file predates those changes.
+this record predates those changes.
 
 | Model                                   | routing | resolution | answering | paraphrase | cost/suite   |
 | --------------------------------------- | ------- | ---------- | --------- | ---------- | ------------ |
 | `openrouter/z-ai/glm-5.3-flash`         | 100     | 100        | **100**   | **100**    | $0.017–0.024 |
 | `openrouter/deepseek/deepseek-v4-flash` | 100     | 100        | 96        | 99         | $0.004–0.005 |
 | `openrouter/google/gemini-3.8-flash`    | 100     | 100        | 97        | —          | $0.065–0.165 |
+
+The `resolution` column was measured before 1.8 changed the follow-up rewrite prompt (the earlier exchange is now fenced); it has not been re-measured.
 
 `anthropic/claude-sonnet-5` scored **100** on `answering` ($0.2345) and
 **99** on `answer_paraphrase` ($0.2176). Those remain valid: the answering
@@ -531,6 +534,8 @@ cannot fail should not contain an unchecked claim.
 ______________________________________________________________________
 
 ## Adding a run
+
+This applies to [docs/measurements/epochs.md](https://github.com/rdazzleman/policyforge/blob/v1.8.0/docs/measurements/epochs.md) in the repository, where the epoch tables live.
 
 Append to the table for the current epoch, or open a new epoch when the
 prompts, budgets or checks change. Each entry wants:

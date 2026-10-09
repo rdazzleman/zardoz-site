@@ -25,7 +25,6 @@ const note = frontmatter.note;
         <details class="docs-toc" open>
           <summary>
             <span class="eyebrow">Security &amp; trust</span>
-            <span class="muted small">PolicyForge {frontmatter.release}</span>
           </summary>
           <div class="docs-group">
             <ol>
@@ -45,7 +44,7 @@ const note = frontmatter.note;
       <article class="doc-prose" data-source={frontmatter.source}>
         <h1>{frontmatter.title}</h1>
         <p class="muted small">
-          Describes PolicyForge {frontmatter.release}. Code and test links open the public repository at the release tag.
+          {frontmatter.stamp ?? `Describes PolicyForge ${frontmatter.release}.`} Code and test links open the public repository at the release tag.
         </p>
         {
           note && (

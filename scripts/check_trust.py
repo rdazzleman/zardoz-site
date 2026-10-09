@@ -158,6 +158,31 @@ def plugin_subject() -> str:
     return unquote(m.group(1))
 
 
+# ---- 7. the stamp ----------------------------------------------------------------------------
+
+#: A page whose figures are not this release's carries its own stamp INSTEAD of "Describes
+#: PolicyForge <version>". Named here, by page, so the rule for every other page stays strict
+#: (80's ruling, issue 289): a release stamp over figures nobody re-measured would assert a fact
+#: nobody measured.
+OWN_STAMPS = {
+    "/trust/measurements/": "Figures measured 2026-09-12 to 2026-09-29, each as the epoch that ran it records; "
+                            "not re-measured for 1.8.0.",
+}
+
+
+def stamp_problems(page_text: dict[str, str], version: str) -> list[str]:
+    problems = []
+    for url, text in sorted(page_text.items()):
+        if url in OWN_STAMPS:
+            if OWN_STAMPS[url] not in text:
+                problems.append(f"{url}: missing its own stamp")
+            if "Describes PolicyForge" in text:
+                problems.append(f"{url}: carries a release stamp over figures that were not re-measured")
+        elif f"Describes PolicyForge {version}." not in text:
+            problems.append(f"{url}: missing the stamp 'Describes PolicyForge {version}.'")
+    return problems
+
+
 # ---- 5. tag pin ----------------------------------------------------------------------------
 
 #: A path ends at whitespace, `)`, `#` or a quote or brace (the `note` in a page's front matter is JSON).
@@ -241,6 +266,8 @@ def run(dist: Path) -> list[str]:
     named = [u for u, t in page_text.items() if any(names_command(t, c) for c in commands)]
     assert named, "no built page names a licensed command: the matcher stopped matching"
     problems += [f"plugin not named: {x}" for x in pages_missing_the_plugin(page_text, commands)]
+    trust_text = {u: t for u, t in page_text.items() if u.startswith(("/trust", "/compare"))}
+    problems += [f"stamp: {x}" for x in stamp_problems(trust_text, release_tag().lstrip("v"))]
     problems += [f"link: {x}" for x in broken_internal_links({u: a for u, a in built.items()
                                                                if u.startswith(("/trust", "/compare"))})]
     return problems
@@ -265,6 +292,15 @@ def self_test() -> list[str]:
     expect("plugin: the same page with the plugin and contact passes",
            pages_missing_the_plugin({"/x/": f"run etl-hitrust; it needs the {PLUGIN}: {CONTACT}"}, cmds) == [])
     expect("plugin: a longer command name does not match", not names_command("etl-hitrust-extra", "etl-hitrust"))
+    stamp = "Describes PolicyForge 1.8.0."
+    own = OWN_STAMPS["/trust/measurements/"]
+    expect("stamp: a page without the release stamp fails", len(stamp_problems({"/trust/a/": "text"}, "1.8.0")) == 1)
+    expect("stamp: a page with it passes", stamp_problems({"/trust/a/": f"x {stamp} y"}, "1.8.0") == [])
+    expect("stamp: the measurements page with a release stamp fails",
+           len(stamp_problems({"/trust/measurements/": f"{stamp} {own}"}, "1.8.0")) == 1)
+    expect("stamp: the measurements page with a release stamp and not its own fails",
+           len(stamp_problems({"/trust/measurements/": stamp}, "1.8.0")) == 2)
+    expect("stamp: the measurements page with only its own passes", stamp_problems({"/trust/measurements/": own}, "1.8.0") == [])
     subject = "PolicyForge licensed-framework plugin"
     good = f"mailto:info@zardoz.io?subject={subject.replace(' ', '%20')}"
     expect("contact: the plugin subject passes", contact_problems({"p": f"[x]({good})"}, subject) == [])

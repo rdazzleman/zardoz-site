@@ -71,8 +71,8 @@ issue in the sense that matters for this project. See
 
 ## Version
 
-These documents describe the repository as of the `passages-as-data` line of
-development, September 2026. The measurements they cite are dated in
+These documents describe PolicyForge 1.8.0.
+The measurements they cite are dated in
 [Measurements](/trust/measurements/); the controls they cite are in the
 source tree and are covered by the test suite in [tests/](https://github.com/rdazzleman/policyforge/tree/v1.8.0/tests); the
 commitments are listed with their tests in [Product security commitments](/trust/commitments/).
