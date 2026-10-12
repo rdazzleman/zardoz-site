@@ -43,7 +43,8 @@ and SOC 2 are in the licensed-framework plugin, distributed separately (to ask f
 minutes** on `glm-5.3-flash`; **about $12** extrapolated on
 `claude-sonnet-5`, from five topics measured rather than twenty, so read it
 as an order of magnitude. No eval graded those documents — the figures say
-what a run costs, not whether the output is good
+what a run costs, not whether the output is good. Measured on 2026-09-17 with
+PolicyForge 1.2.1 and not re-measured since
 ([Measurements](/trust/measurements/), epoch 21).
 
 **What it refuses to claim.** Nothing it produces is evidence of compliance.

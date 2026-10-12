@@ -217,9 +217,10 @@ processor.
    that quoted what it saw would copy a licensed export into `output/`,
    recreating the exact leak it exists to disprove.
 1. **The BYOC boundary**: licensed content is read in, never written to a
-   bundled or public path. Enforced over the parsed AST of the whole read
-   path, not as a substring check, so the modules stay free to *discuss* the
-   rule in their docstrings.
+   bundled or public path. The ETL commands refuse to write a licensed
+   catalog into the bundled directory, or through a hard link to a bundled
+   file, and refuse an undeclared write into the repository. The read-path
+   walk over the licensed parsers runs in the private plugin repository.
 1. **`allow_licensed_in_repo: false`** by default, with
    `policyforge check` failing if licensed content is ever committed.
 1. **Secrets never enter prompts, the ledger, or version history**; keys come
@@ -230,7 +231,10 @@ processor.
 
 **Evidence.** [`tests/test_llm_boundary.py`](https://github.com/rdazzleman/policyforge/blob/v1.8.0/tests/test_llm_boundary.py),
 [`tests/test_llm_ledger.py`](https://github.com/rdazzleman/policyforge/blob/v1.8.0/tests/test_llm_ledger.py),
-`tests/test_byoc_boundary.py`,
+[`tests/test_cli.py`](https://github.com/rdazzleman/policyforge/blob/v1.8.0/tests/test_cli.py),
+[`tests/test_licensed_hardlink.py`](https://github.com/rdazzleman/policyforge/blob/v1.8.0/tests/test_licensed_hardlink.py),
+[`tests/test_frameworks_registry.py`](https://github.com/rdazzleman/policyforge/blob/v1.8.0/tests/test_frameworks_registry.py),
+[`tests/test_force_split.py`](https://github.com/rdazzleman/policyforge/blob/v1.8.0/tests/test_force_split.py),
 [`tests/test_side_channels.py`](https://github.com/rdazzleman/policyforge/blob/v1.8.0/tests/test_side_channels.py),
 [`tests/test_content_class_handoff.py`](https://github.com/rdazzleman/policyforge/blob/v1.8.0/tests/test_content_class_handoff.py).
 gitleaks in [`ci.yml`](https://github.com/rdazzleman/policyforge/blob/v1.8.0/.github/workflows/ci.yml).

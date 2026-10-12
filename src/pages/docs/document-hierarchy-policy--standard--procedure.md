@@ -2,7 +2,7 @@
 layout: ../../layouts/Doc.astro
 title: "Document hierarchy: Policy > Standard > Procedure"
 description: "PolicyForge 1.7.0 documentation: Document hierarchy: Policy > Standard > Procedure."
-source: "README.md at PolicyForge 1.7.0, lines 1668-1702"
+source: "README.md at PolicyForge 1.7.0, lines 1668-1702, revised for 1.8.0 from its changelog and command line"
 licensedCommands: []
 ---
 
@@ -12,30 +12,52 @@ of detail — `policyforge generate --tier <tier>`:
 
 - **Standard** (`--tier standard`, the default) — the detailed, technical
   document: every synthesized requirement, source-tagged back to the
-  frameworks it came from (`[NIST IA-5 | FedRAMP IA-5]`), vendor-specific
-  where `org.vendors` allows it. Audience: security/IT staff who implement
-  and audit against it.
-- **Policy** (`--tier policy`, requires `--standard <path>`) — a short,
-  principle-level document read by the whole organization, not just
-  practitioners. It compresses the same synthesized requirements into a
-  small number of plain-language commitments and drops framework/control
-  citations entirely — that traceability lives in the Standard, which the
-  Policy references by name in its "Related Standards" section (extracted
-  automatically from the Standard document's title, via
-  `generate/policy_writer.py`'s `extract_title`).
+  frameworks it came from in one short form (`[HIPAA Security Rule
+  164.308(a)(4)(ii)(C) | NIST AC-2]`; 800-53's ids appear once, under
+  `NIST`, and a tailoring such as FedRAMP is named as a baseline),
+  vendor-specific where `org.vendors` allows it. Under each section, a
+  collapsible block per framework quotes every requirement that section
+  cites, **in the catalog's own words**, taken from the catalog itself and
+  never from the model. A licensed catalog is listed by id and title only,
+  unless you set `standards.quote_licensed: true`. `check` holds every quote
+  to its catalog, character for character. Audience: security/IT staff who
+  implement and audit against it.
+- **Policy** (`--tier policy`) — a short, principle-level document read by
+  the whole organization, not just practitioners. It states intent and scope
+  in plain language and carries no framework or control citations: that
+  traceability lives in the Standards. One Policy can cover several
+  Standards:
+  - with `--policy "<name>"`, it is drafted over **every Standard whose topic
+    names that Policy** in `config/topics.yaml`, with one section per
+    Standard and a closing "Standards under this Policy" list (each
+    Standard's title, owner and file) written by code, not by the model.
+    The starter registry groups its 27 topics under 12 Policies.
+  - with `--standard <path>`, it is drafted from one topic's Standard, which
+    it references by name in its "Related Standards" section.
 - **Procedure** (`--tier procedure`, requires `--standard <path>`) — one
   level *more* granular than the Standard: each requirement becomes the
-  literal ordered steps a practitioner performs to satisfy it, still
-  source-tagged for traceability and referencing the Standard by name the
-  same way the Policy does.
+  literal ordered steps a practitioner performs to satisfy it, referencing
+  the Standard by name. The steps carry no citations; a final
+  **Traceability** section lists each step with the Standard section it
+  implements and the citations it carried.
 
-Generate a topic's Standard first, then its Policy and/or Procedure from
-that Standard:
+A topic names its Policy with `policy:` in `config/topics.yaml`, and the
+`policies:` block there describes each Policy (its name, accountable
+executive, cadence, description and the page it publishes to). A generated
+Standard records its Policy in its frontmatter and says in one sentence
+which Policy it implements.
+
+Generate each topic's Standard first, then its Procedure from that Standard,
+and the Policy over the Standards it covers:
 
 ```
 policyforge generate --tier standard --synthesis output/synthesis/auth-mgmt.md
-policyforge generate --tier policy --synthesis output/synthesis/auth-mgmt.md \
-  --standard output/standards/auth-mgmt.md
 policyforge generate --tier procedure --synthesis output/synthesis/auth-mgmt.md \
-  --standard output/standards/auth-mgmt.md
+  --standard docs/standards/auth-mgmt.md
+policyforge generate --tier policy --policy "Access Control"
 ```
+
+Documents are written into the content tree that `check`, `publish` and
+Zardoz read: `docs/standards/`, `docs/procedures/` and `docs/policies/`
+(the Policy above goes to `docs/policies/access-control.md`). `--out`
+writes somewhere else.

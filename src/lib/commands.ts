@@ -54,10 +54,10 @@ export const stages: { title: string; summary: string; key: string[]; cmds: [str
   {
     title: "Draft documents",
     key: ["synthesize", "generate", "parameters"],
-    summary: "This is where AI is used. For each topic, every relevant requirement is merged into one list, then written up as three documents. The AI works only from the text it is given.",
+    summary: "This is where AI is used. For each topic, every relevant requirement is merged into one list, then written up as a Standard and a Procedure; a Policy covers one or more topics' Standards. The AI works only from the text it is given.",
     cmds: [
       ["synthesize", "Merge every requirement a topic owns into one de-duplicated list."],
-      ["generate", "Write a Policy, Standard or Procedure from that list."],
+      ["generate", "Write a Standard or Procedure from that list, or one Policy over several Standards."],
       ["parameters", "Record your decided values, like a review frequency, so regenerated documents use them."],
       ["ssp", "Build a NIST 800-53 System Security Plan as a spreadsheet."],
     ],

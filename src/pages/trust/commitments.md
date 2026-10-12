@@ -117,9 +117,30 @@ BYOC content is read in and never written to a bundled or public location.
 `allow_licensed_in_repo` defaults to false and `policyforge check` fails if
 licensed content is committed.
 
-**Enforced by** `tests/test_byoc_boundary.py`,
-checked over the parsed AST across the whole read path rather than as a
-substring, so the modules stay free to discuss the rule in their docstrings.
+**Enforced by** these public tests, each of which fails when its guard is
+disabled:
+
+- the bundled-directory refusal: [`tests/test_cli.py`](https://github.com/rdazzleman/policyforge/blob/v1.8.0/tests/test_cli.py)
+  `test_a_licensed_catalog_never_lands_in_the_bundled_directory`,
+  `test_another_checkouts_bundled_directory_is_refused_from_outside_it`,
+  `test_etl_govramp_refuses_to_write_into_the_bundled_directory`,
+  `test_etl_hitrust_refuses_to_write_into_the_bundled_directory`,
+  `test_etl_govramp_bundled_directory_refusal_names_the_matrix`;
+- the hard-link refusal: [`tests/test_licensed_hardlink.py`](https://github.com/rdazzleman/policyforge/blob/v1.8.0/tests/test_licensed_hardlink.py)
+  `test_an_out_hard_linked_to_a_bundled_catalog_is_refused`,
+  `test_a_manifest_hard_linked_to_a_bundled_one_is_refused`;
+- `allow_licensed_in_repo` in `policyforge check`: [`tests/test_frameworks_registry.py`](https://github.com/rdazzleman/policyforge/blob/v1.8.0/tests/test_frameworks_registry.py)
+  `test_licensed_content_committed_without_the_declaration_is_an_error`,
+  `test_the_check_command_fails_on_a_licence_breach`,
+  `test_the_frameworks_command_exits_nonzero_on_a_breach`;
+- `allow_licensed_in_repo` for an ETL `--out`: [`tests/test_force_split.py`](https://github.com/rdazzleman/policyforge/blob/v1.8.0/tests/test_force_split.py)
+  `test_without_either_flag_the_undeclared_write_is_refused`, and
+  [`tests/test_cli.py`](https://github.com/rdazzleman/policyforge/blob/v1.8.0/tests/test_cli.py)
+  `test_etl_govramp_refuses_a_tracked_destination_without_permission`,
+  `test_etl_hitrust_refuses_a_tracked_destination_without_permission`.
+
+The read-path walk over the licensed parsers runs in the private plugin
+repository.
 
 The ETL commands also refuse to write a licensed catalog into the bundled
 `data/frameworks/` directory, **even with `--allow-undeclared-licensed`**, enforced by
@@ -235,7 +256,10 @@ python -m pytest tests/test_no_undeclared_endpoints.py \
                  tests/test_llm_boundary.py \
                  tests/test_llm_ledger.py \
                  tests/test_side_channels.py \
-                 tests/test_byoc_boundary.py \
+                 tests/test_cli.py \
+                 tests/test_licensed_hardlink.py \
+                 tests/test_frameworks_registry.py \
+                 tests/test_force_split.py \
                  tests/test_parser_gate.py -q
 ```
 

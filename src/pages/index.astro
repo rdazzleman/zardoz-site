@@ -11,6 +11,56 @@ const sourceControls = [
   { id: "03.13.11", title: "Cryptographic Protection", from: ["SC-13"] },
 ];
 
+// The hero Standard's source blocks, as 1.8's `generate` writes them under a
+// section (one block per framework, the catalog's own words). Quoted from the
+// catalogs bundled at release/1.8 5f2da9b3 (data/frameworks/hipaa-security-rule
+// and nist-800-53-r5), by running add_source_blocks on this section. Never
+// edit a quote by hand: re-derive it.
+const sourceBlocks = [
+  {
+    name: "HIPAA Security Rule",
+    open: true,
+    entries: [
+      {
+        id: "164.308(a)(4)(ii)(C)",
+        title: "Access establishment and modification",
+        text: "Implement policies and procedures that, based upon the covered entity's or the business associate's access authorization policies, establish, document, review, and modify a user's right of access to a workstation, transaction, program, or process.",
+      },
+    ],
+  },
+  {
+    name: "NIST 800-53",
+    open: false,
+    entries: [
+      {
+        id: "AC-2",
+        title: "Account Management",
+        text: `a. Define and document the types of accounts allowed and specifically prohibited for use within the system;
+b. Assign account managers;
+c. Require [Assignment: organization-defined prerequisites and criteria] for group and role membership;
+d. Specify:
+  1. Authorized users of the system;
+  2. Group and role membership; and
+  3. Access authorizations (i.e., privileges) and [Assignment: organization-defined attributes (as required)] for each account;
+e. Require approvals by [Assignment: organization-defined personnel or roles] for requests to create accounts;
+f. Create, enable, modify, disable, and remove accounts in accordance with [Assignment: organization-defined policy, procedures, prerequisites, and criteria];
+g. Monitor the use of accounts;
+h. Notify account managers and [Assignment: organization-defined personnel or roles] within:
+  1. [Assignment: organization-defined time period] when accounts are no longer required;
+  2. [Assignment: organization-defined time period] when users are terminated or transferred; and
+  3. [Assignment: organization-defined time period] when system usage or need-to-know changes for an individual;
+i. Authorize access to the system based on:
+  1. A valid access authorization;
+  2. Intended system usage; and
+  3. [Assignment: organization-defined attributes (as required)];
+j. Review accounts for compliance with account management requirements [Assignment: organization-defined frequency];
+k. Establish and implement a process for changing shared or group account authenticators (if deployed) when individuals are removed from the group; and
+l. Align account management processes with personnel termination and transfer processes.`,
+      },
+    ],
+  },
+];
+
 const problems = [
   {
     title: "The same requirement, written many ways",
@@ -37,7 +87,7 @@ const steps = [
   },
   {
     title: "Draft by topic",
-    body: "For each topic — access review, incident response, backups — you get a Policy, a Standard and a Procedure, owned by one team.",
+    body: "For each topic — access review, incident response, backups — you get a Standard and a Procedure, owned by one team, under a few broader Policies. Each Standard quotes the source requirements it cites, word for word.",
   },
   {
     title: "Publish and ask",
@@ -55,9 +105,9 @@ const steps = [
     <section class="hero">
       <div class="container hero-grid">
         <div class="hero-copy">
-          <a class="pill" href="/frameworks">
-            <span class="pill-tag">New in 1.7</span>
-            NIST CSF 2.0 and the HIPAA Privacy Rule →
+          <a class="pill" href="/docs/document-hierarchy-policy--standard--procedure">
+            <span class="pill-tag">New in 1.8</span>
+            Standards quote their sources, word for word →
           </a>
           <p class="eyebrow">For teams answering to more than one framework</p>
           <h1>Security policies your engineers can follow, and your assessor can trace.</h1>
@@ -92,8 +142,8 @@ const steps = [
                 after the account owner's manager approves a documented request.
               </p>
               <div class="cites">
-                <span class="chip">NIST 800-53 AC-2</span>
                 <span class="chip">HIPAA 164.308(a)(4)(ii)(C)</span>
+                <span class="chip">NIST AC-2</span>
               </div>
             </div>
             <div class="req">
@@ -103,25 +153,29 @@ const steps = [
                 <span class="slot">[organization-defined frequency]</span> by the owning team.
               </p>
               <div class="cites">
-                <span class="chip">NIST 800-53 AC-2(j)</span>
-                <span class="chip">HIPAA 164.308(a)(4)</span>
+                <span class="chip">HIPAA 164.308(a)(4)(ii)(C)</span>
+                <span class="chip">NIST AC-2</span>
               </div>
             </div>
-            <div class="req">
-              <span class="req-n">4.3</span>
-              <p>
-                Access is removed within
-                <span class="slot">[organization-defined time period]</span> of a person
-                leaving the organization.
-              </p>
-              <div class="cites">
-                <span class="chip">NIST 800-53 PS-4</span>
-                <span class="chip">HIPAA 164.308(a)(3)(ii)(C)</span>
-              </div>
+            <div class="src-blocks">
+              {
+                sourceBlocks.map((b) => (
+                  <details class="src-block" open={b.open}>
+                    <summary>Source: {b.name} ({b.entries.length})</summary>
+                    {b.entries.map((e) => (
+                      <div class="src-entry">
+                        <p><strong>{e.id}</strong> {e.title}</p>
+                        <pre>{e.text}</pre>
+                      </div>
+                    ))}
+                  </details>
+                ))
+              }
             </div>
           </div>
           <figcaption class="doc-foot">
             <span class="legend"><i style="background: var(--accent-soft); outline: 1px solid var(--accent);"></i>Source control</span>
+            <span class="legend"><i style="background: var(--bg-sunk); outline: 1px solid var(--rule);"></i>Its own words, quoted from the catalog</span>
             <span class="legend"><i style="background: var(--warn-soft); outline: 1px solid var(--warn);"></i>Decision still yours to make</span>
           </figcaption>
         </figure>
@@ -265,7 +319,7 @@ const steps = [
             and cites the exact section and control — and when your documents don’t settle a
             question, it tells you so instead of guessing.
           </p>
-          <a class="more-link" style="margin-top: 0.5rem; color: var(--band-accent);" href="/examples#ask">Ask it about real example policies →</a>
+          <a class="more-link" style="margin-top: 0.5rem; color: var(--band-accent);" href="/docs/zardoz-asking-questions-instead-of-running-commands">How Zardoz answers →</a>
         </div>
         <div class="chat">
           <div class="chat-label">Illustration</div>
@@ -282,8 +336,8 @@ const steps = [
             </p>
             <div class="cites" style="grid-column: auto; margin-top: 0.2rem;">
               <span class="chip">Access Review Standard §4.2</span>
-              <span class="chip">NIST 800-53 AC-2(j)</span>
-              <span class="chip">HIPAA 164.308(a)(4)</span>
+              <span class="chip">NIST AC-2</span>
+              <span class="chip">HIPAA 164.308(a)(4)(ii)(C)</span>
             </div>
           </div>
           <div class="msg q">
@@ -384,7 +438,8 @@ const steps = [
           </div>
         </div>
         <p class="table-note">
-          These are measured costs, not a quality rating. <a href="/models">Models &amp; cost</a>
+          These are measured costs, taken on 2026-09-17 with PolicyForge 1.2.1 and not
+          re-measured since, and they are not a quality rating. <a href="/models">Models &amp; cost</a>
           has the full breakdown and what it does and doesn’t tell you.
         </p>
       </div>
