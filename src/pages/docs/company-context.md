@@ -1,7 +1,7 @@
 ---
 layout: ../../layouts/Doc.astro
 title: "Company context"
-description: "PolicyForge 1.7.0 documentation: Company context."
+description: "PolicyForge 1.8.0 documentation: Company context."
 source: "README.md at PolicyForge 1.7.0, lines 383-438"
 licensedCommands: []
 ---
@@ -9,8 +9,8 @@ licensedCommands: []
 Frameworks describe what must be true. They can't describe *your* org — and
 that difference is most of the distance between a document template and a
 procedure someone can follow on a Tuesday. That org-specific half lives in
-one gitignored file, `config/config.yaml` (copy `config/config.example.yaml`
-to start), and it feeds every generation stage.
+one gitignored file, `config/config.yaml` (`policyforge init` writes a
+starter; `config/config.example.yaml` documents every key), and it feeds every generation stage.
 
 ```yaml
 org:

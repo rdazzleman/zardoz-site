@@ -1,7 +1,7 @@
 ---
 layout: ../../layouts/Doc.astro
 title: "Zardoz: asking questions instead of running commands"
-description: "PolicyForge 1.7.0 documentation: Zardoz: asking questions instead of running commands."
+description: "PolicyForge 1.8.0 documentation: Zardoz: asking questions instead of running commands."
 source: "README.md at PolicyForge 1.7.0, lines 1068-1457"
 licensedCommands: []
 ---
@@ -19,9 +19,9 @@ policyforge zardoz sync                      # or/and pull the published pages
 policyforge zardoz                           # open the shell
 ```
 
-Zardoz **reads; it does not write.** It can draft a `policyforge edit-topic`
-command for you to run, but the publish path is not in its import graph at
-all — a test walks the parsed AST of every module in the package to prove it,
+Zardoz **reads; it does not write.** To change a page, run
+`policyforge edit-topic` yourself. The publish path is not in its import
+graph at all — a test walks the parsed AST of every module in the package to prove it,
 which catches a lazy import inside a function body as readily as one at the
 top of a file. That makes it a structural property rather than a rule
 somebody has to remember during review.
@@ -352,8 +352,9 @@ Coverage — scope: all controls
   Orphaned        1053
 ```
 
-Seven analyses, each also a command: `/coverage`, `/parameters`, `/drift`,
-`/history`, `/check`, `/frameworks`, `/roles`.
+Twelve analyses, each also a command: `/boundary`, `/bundle`, `/satisfies`,
+`/addresses`, `/coverage`, `/parameters`, `/drift`, `/history`, `/check`,
+`/frameworks`, `/hitrust`, `/roles`.
 
 **The model routes; the report speaks.** Choosing which analysis a question
 wants is a judgement about intent, which is what a model is for. Reporting

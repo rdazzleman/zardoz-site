@@ -1,7 +1,7 @@
 ---
 layout: ../../layouts/Doc.astro
 title: "Repo hygiene / scanning"
-description: "PolicyForge 1.7.0 documentation: Repo hygiene / scanning."
+description: "PolicyForge 1.8.0 documentation: Repo hygiene / scanning."
 source: "README.md at PolicyForge 1.7.0, lines 2656-2714"
 licensedCommands: []
 ---
@@ -53,7 +53,9 @@ See `.pre-commit-config.yaml` and `.github/workflows/ci.yml`.
 ## Running the quality checks yourself
 
 `python scripts/check.py` runs every check in one command — ruff (lint),
-ruff (format), pytest, bandit, semgrep, pip-audit, mdformat, plus gitleaks
+ruff (format), pytest, bandit, semgrep (from a pinned container image, so it
+needs Docker; without it the step is skipped with a note), pip-audit, mdformat,
+plus gitleaks
 if you have the binary installed (see the script's docstring for why
 gitleaks is optional locally but always runs in CI). Lint and format run
 first, since they're the fastest and the most likely to fail on a fresh

@@ -1,7 +1,7 @@
 ---
 layout: ../../layouts/Doc.astro
 title: "Architecture"
-description: "PolicyForge 1.7.0 documentation: Architecture."
+description: "PolicyForge 1.8.0 documentation: Architecture."
 source: "README.md at PolicyForge 1.7.0, lines 2433-2513"
 licensedCommands: []
 ---
@@ -56,7 +56,8 @@ are described in
 
 ```
 config/                  Your local config (model, API key env var name, chosen frameworks)
-data/frameworks/         Bundled, redistributable framework data (NIST, FedRAMP, ARC-AMPE)
+data/frameworks/         Bundled, redistributable framework data (NIST, FedRAMP, ARC-AMPE, HIPAA, ...)
+docs/                    The content tree: drafted Policies, Standards and Procedures
 local_content/           Gitignored. Drop your own HITRUST/GovRAMP exports here.
 src/policyforge/
   llm/                    Provider abstraction. Ships Anthropic, Amazon Bedrock

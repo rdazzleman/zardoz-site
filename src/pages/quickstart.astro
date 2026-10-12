@@ -18,7 +18,7 @@ const version = await latestVersion();
         <p class="lede">
           PolicyForge is the open-source tool behind this site. You install it as the
           <code>policyforge</code> command. Six steps, two AI calls, and on a budget model
-          less than a cent.
+          less than a cent (timed on PolicyForge 1.7.0).
         </p>
       </div>
     </section>
@@ -46,8 +46,12 @@ pipx install git+https://github.com/rdazzleman/policyforge@{version}</code></pre
             <span class="qs-n">2</span>
             <div class="qs-body">
               <h3>Create a project</h3>
-              <p>This makes a folder with the included frameworks and example settings.</p>
-              <pre><code>policyforge init my-policies && cd my-policies</code></pre>
+              <p>
+                This makes a folder with the included frameworks, a settings file and a topic
+                list. Name your AI provider here, or leave <code>--provider</code> off for a
+                model on your own machine that needs no key.
+              </p>
+              <pre><code>policyforge init my-policies --provider anthropic && cd my-policies</code></pre>
             </div>
           </li>
 
@@ -56,18 +60,15 @@ pipx install git+https://github.com/rdazzleman/policyforge@{version}</code></pre
             <div class="qs-body">
               <h3>Connect your AI model</h3>
               <p>
-                Copy the example settings, then set your API key. The settings file stores
-                the <em>name</em> of the variable holding your key, never the key itself.
+                Set your API key. The settings file <code>init</code> wrote stores the
+                <em>name</em> of the variable holding your key, never the key itself.
               </p>
-              <pre><code>cp config/config.example.yaml config/config.yaml
-cp config/topics.example.yaml config/topics.yaml
-
-export ANTHROPIC_API_KEY=sk-...   <span class="cmt"># whichever variable your settings name</span>
+              <pre><code>export ANTHROPIC_API_KEY=sk-...   <span class="cmt"># whichever variable your settings name</span>
 policyforge llm-check             <span class="cmt"># confirms the key and model work</span></code></pre>
               <div class="callout">
                 <p>
-                  <strong>The topic list is yours to edit.</strong> It starts with twenty
-                  common topics, each with an owning team. It is really a statement of how
+                  <strong>The topic list is yours to edit.</strong> It starts with 27
+                  common topics, each with an owning team, grouped under 12 Policies. It is really a statement of how
                   your organization is arranged, so adjust it to match.
                 </p>
               </div>
@@ -117,7 +118,7 @@ policyforge llm-check             <span class="cmt"># confirms the key and model
           <div class="card">
             <h3>What you get</h3>
             <p>
-              The Standard in <code>output/standards/</code>, the merged requirements in
+              The Standard in <code>docs/standards/</code>, the merged requirements in
               <code>output/synthesis/</code>, saved versions in <code>output/.history/</code>,
               and a record of every AI call from <code>policyforge model-log</code>.
             </p>
@@ -135,8 +136,9 @@ policyforge llm-check             <span class="cmt"># confirms the key and model
           <div class="card">
             <h3>Where to go next</h3>
             <p>
-              Write the Policy and Procedure with <code>--tier policy</code> and
-              <code>--tier procedure</code>. Run <code>policyforge coverage</code> to find
+              Write the Procedure with <code>--tier procedure</code>. Once every Standard a
+              Policy covers exists, write the Policy with
+              <code>--tier policy --policy "Access Control"</code>. Run <code>policyforge coverage</code> to find
               controls no topic owns. Then run <code>policyforge zardoz</code> and start asking
               questions.
             </p>

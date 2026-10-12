@@ -1,24 +1,26 @@
 ---
 layout: ../../layouts/Doc.astro
 title: "Quickstart"
-description: "PolicyForge 1.7.0 documentation: Quickstart."
+description: "PolicyForge 1.8.0 documentation: Quickstart."
 source: "README.md at PolicyForge 1.7.0, lines 22-73"
 licensedCommands: []
 ---
 
-Install it, lay out a project, and draft one Standard. The commands below
-were run start to finish on a clean directory: two model calls, $0.0070 and
-about 90 seconds on `openrouter/z-ai/glm-5.3-flash`.
+Install it, lay out a project, and draft one Standard. On PolicyForge
+1.7.0, these steps ran start to finish on a clean directory in two model
+calls, $0.0070 and about 90 seconds on `openrouter/z-ai/glm-5.3-flash`;
+they were not re-timed for 1.8.
 
 ```bash
 brew install rdazzleman/tap/policyforge
 # or, without Homebrew:
-# pipx install git+https://github.com/rdazzleman/policyforge@v1.7.0
+# pipx install git+https://github.com/rdazzleman/policyforge@v1.8.0
 
-policyforge init my-policies && cd my-policies
-
-cp config/config.example.yaml config/config.yaml   # provider, model, and the NAME of the env var holding your key
-cp config/topics.example.yaml config/topics.yaml   # 20 starter topics, each with an owning team
+policyforge init my-policies --provider anthropic && cd my-policies
+                                                   # writes config/config.yaml (provider, model, and the NAME of
+                                                   # the env var holding your key) and config/topics.yaml
+                                                   # (27 starter topics under 12 Policies, each with an owning team);
+                                                   # leave --provider off for a local model that needs no key
 export ANTHROPIC_API_KEY=sk-...                    # whichever variable your config names
 policyforge llm-check                              # confirms the key works, and prints what the provider supports
 
@@ -38,9 +40,10 @@ policyforge generate --tier standard \
                      --synthesis output/synthesis/identity-lifecycle-access-review.md
 ```
 
-You get a Standard in `output/standards/`, its synthesis in
-`output/synthesis/`, the version history in `output/.history/`, and an
-account of every model call in `policyforge model-log`.
+You get a Standard in `docs/standards/` (the content tree `check`, `publish`
+and Zardoz read), its synthesis in `output/synthesis/`, the version history
+in `output/.history/`, and an account of every model call in
+`policyforge model-log`.
 
 Expect the draft to name `[Identity Provider]`, `[Ticketing System]` and
 their kin: a role nobody has filled stays a visible placeholder rather than a

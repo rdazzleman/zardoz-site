@@ -1,7 +1,7 @@
 ---
 layout: ../../layouts/Doc.astro
 title: "Confluence import and local version history"
-description: "PolicyForge 1.7.0 documentation: Confluence import and local version history."
+description: "PolicyForge 1.8.0 documentation: Confluence import and local version history."
 source: "README.md at PolicyForge 1.7.0, lines 871-919"
 licensedCommands: []
 ---

@@ -1,7 +1,7 @@
 ---
 layout: ../../layouts/Doc.astro
 title: "A note on using this at work"
-description: "PolicyForge 1.7.0 documentation: A note on using this at work."
+description: "PolicyForge 1.8.0 documentation: A note on using this at work."
 source: "README.md at PolicyForge 1.7.0, lines 2716-2725"
 licensedCommands: []
 ---

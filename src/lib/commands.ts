@@ -1,5 +1,5 @@
 /**
- * Every `policyforge` command in 1.7.0, by pipeline stage. "How it works" shows each
+ * Every `policyforge` command in 1.8.0, by pipeline stage. "How it works" shows each
  * stage's key commands; /docs/commands lists them all. One list, so they can't drift.
  */
 export const stages: { title: string; summary: string; key: string[]; cmds: [string, string][] }[] = [
@@ -8,7 +8,7 @@ export const stages: { title: string; summary: string; key: string[]; cmds: [str
     key: ["init", "llm-check"],
     summary: "Create a project and confirm your AI connection works. Nothing here spends money except one small test call.",
     cmds: [
-      ["init", "Create a project folder with the included frameworks and example settings."],
+      ["init", "Create a project folder with the included frameworks, a working settings file and topic list. --refresh updates them after an upgrade."],
       ["llm-check", "Confirm your API key and model work, and show what the provider supports."],
       ["frameworks", "List the frameworks on disk and whether each may be shared."],
       ["boundary", "Show which content may be sent to your configured AI model, and why."],

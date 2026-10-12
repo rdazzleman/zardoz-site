@@ -1,7 +1,7 @@
 ---
 layout: ../../layouts/Doc.astro
 title: "One topic, one team"
-description: "PolicyForge 1.7.0 documentation: One topic, one team."
+description: "PolicyForge 1.8.0 documentation: One topic, one team."
 source: "README.md at PolicyForge 1.7.0, lines 210-381"
 licensedCommands: []
 ---
@@ -71,13 +71,17 @@ not a fourth parallel document set.
 ## The topic registry
 
 Topics are declared in `config/topics.yaml` — gitignored, because it names
-your internal teams. Copy `config/topics.example.yaml`, which ships a
-20-topic starter set that fully covers the Low, Moderate and High baselines,
-and change the owners to your teams.
+your internal teams. `policyforge init` writes it from
+`config/topics.example.yaml`: 27 starter topics, grouped under 12 Policies,
+that fully cover the Low, Moderate and High baselines. Change the owners to
+your teams. Each topic names the Policy its Standard sits under with
+`policy:`, and the `policies:` block in the same file describes each Policy
+and the page it publishes to.
 
 ```yaml
 topics:
   - name: Identity Lifecycle & Access Review
+    policy: Access Control
     owner: IAM Engineering
     cadence: quarterly
     nist_controls: [AC-1, AC-2, AC-3, AC-5, AC-6, AC-14, IA-4, IA-12, PS-4, PS-5]
@@ -97,13 +101,15 @@ either becoming contested.
 ## Checking ownership: `policyforge coverage`
 
 ```
-policyforge coverage \
-  --controls data/frameworks/nist-800-53-r5/controls.json \
-  --controls data/frameworks/hipaa-security-rule/controls.json \
-  --baseline moderate
+policyforge coverage --baseline moderate
 ```
 
+With no `--controls`, it reads the catalogs `programme.catalogs` names in
+`config/config.yaml`; the starter `init` writes lists 800-53, the AI RMF and
+the three HIPAA rules.
+
 ```
+catalogs: programme (5): nist-800-53-r5, nist-ai-rmf, hipaa-security-rule, hipaa-privacy-rule, hipaa-breach-notification-rule
 Coverage — scope: Moderate baseline
 ============================================================
   In scope        287
@@ -113,7 +119,7 @@ Coverage — scope: Moderate baseline
 ...
 HIPAA reachable via the crosswalk
 ------------------------------------------------------------
-  65 of 75 requirements map to an owned NIST control
+  65 of 74 requirements map to an owned NIST control
 ```
 
 It reports four things, and needs no LLM — it's set arithmetic over the

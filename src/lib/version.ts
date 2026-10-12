@@ -10,7 +10,7 @@
  * (unauthenticated GitHub allows 60 requests/hour per IP, and Actions runners
  * share addresses). Keep it current-ish, but it is a safety net, not the source.
  */
-const FALLBACK = "v1.7.0";
+const FALLBACK = "v1.8.0";
 
 const API = "https://api.github.com/repos/rdazzleman/policyforge";
 const HEADERS = { Accept: "application/vnd.github+json", "User-Agent": "zardoz-io-site" };

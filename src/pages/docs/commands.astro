@@ -5,15 +5,15 @@ import { stages } from "../../lib/commands";
 const total = stages.reduce((n, s) => n + s.cmds.length, 0);
 const frontmatter = {
   title: "Command reference",
-  description: `All ${total} policyforge commands in 1.7.0, by stage.`,
-  source: "the site's own list (src/lib/commands.ts), checked against the 1.7.0 command line",
+  description: `All ${total} policyforge commands in 1.8.0, by stage.`,
+  source: "the site's own list (src/lib/commands.ts), checked against the 1.8.0 command line",
   licensedCommands: ["etl-govramp", "etl-hitrust", "etl-soc2-tsc"],
 };
 ---
 
 <Doc frontmatter={frontmatter}>
   <p>
-    Every <code>policyforge</code> command in 1.7.0, by the stage of the pipeline it belongs
+    Every <code>policyforge</code> command in 1.8.0, by the stage of the pipeline it belongs
     to. <code>policyforge &lt;command&gt; --help</code> gives each one's options.
   </p>
   {

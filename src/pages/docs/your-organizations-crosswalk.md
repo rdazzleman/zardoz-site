@@ -1,7 +1,7 @@
 ---
 layout: ../../layouts/Doc.astro
 title: "Your organization's crosswalk"
-description: "PolicyForge 1.7.0 documentation: Your organization's crosswalk."
+description: "PolicyForge 1.8.0 documentation: Your organization's crosswalk."
 source: "README.md at PolicyForge 1.7.0, lines 753-820"
 licensedCommands: []
 ---
@@ -51,7 +51,7 @@ it — incident reporting for reviewing system activity — where the models map
 the controls that *carry the obligation*. Which of those an organization means by "mapped"
 is its own decision, and the value of `propose` is putting the difference, with
 the words behind each side, in front of the person making it. See
-MEASUREMENTS.md for the probe and the eval suite graded on the cases nobody
+[Measurements](/trust/measurements/) for the probe and the eval suite graded on the cases nobody
 would dispute.
 
 **`review`** shows the flagged published pairs first, then new proposals:

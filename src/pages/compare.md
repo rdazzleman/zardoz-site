@@ -35,7 +35,7 @@ controls no topic owns
 ([zardoz.io](https://zardoz.io)).
 
 **What is built.** The pipeline runs end to end — `map` → `synthesize` →
-`generate` → publish — over four bundled public-domain catalogs, each
+`generate` → publish — over thirteen bundled public-domain catalogs, each
 re-fetchable from its source. Bring-your-own loaders for HITRUST CSF, GovRAMP
 and SOC 2 are in the licensed-framework plugin, distributed separately (to ask for it, email [info@zardoz.io](mailto:info@zardoz.io?subject=PolicyForge%20licensed-framework%20plugin)).
 

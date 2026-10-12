@@ -1,7 +1,7 @@
 ---
 layout: ../../layouts/Doc.astro
 title: "The problem this solves"
-description: "PolicyForge 1.7.0 documentation: The problem this solves."
+description: "PolicyForge 1.8.0 documentation: The problem this solves."
 source: "README.md at PolicyForge 1.7.0, lines 152-208"
 licensedCommands: []
 ---

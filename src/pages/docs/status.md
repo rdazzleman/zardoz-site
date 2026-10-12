@@ -1,15 +1,15 @@
 ---
 layout: ../../layouts/Doc.astro
 title: "Status"
-description: "PolicyForge 1.7.0 documentation: Status."
+description: "PolicyForge 1.8.0 documentation: Status."
 source: "README.md at PolicyForge 1.7.0, lines 440-751"
 licensedCommands: ["etl-govramp", "etl-hitrust", "etl-soc2-tsc"]
 ---
 
 The full pipeline is functional end-to-end: `etl-oscal` -> `map` ->
 `synthesize` -> `generate` -> `export-confluence` (optional), plus `ssp` as a
-separate output path. All six LLM providers (Anthropic, Bedrock, Vertex,
-openai-compat/local, LiteLLM and cascade),
+separate output path. All seven LLM providers (Anthropic, Bedrock, Vertex,
+Gemini, openai-compat/local, LiteLLM and cascade),
 the control loaders, crosswalk builder, LLM-driven synthesis/generation
 stages, Confluence export/import, and local version history are all wired up
 and tested. The loaders for licensed frameworks (HITRUST CSF, GovRAMP and

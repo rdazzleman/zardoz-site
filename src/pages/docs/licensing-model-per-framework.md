@@ -1,7 +1,7 @@
 ---
 layout: ../../layouts/Doc.astro
 title: "Licensing model (per framework)"
-description: "PolicyForge 1.7.0 documentation: Licensing model (per framework)."
+description: "PolicyForge 1.8.0 documentation: Licensing model (per framework)."
 source: "README.md at PolicyForge 1.7.0, lines 1704-2095"
 licensedCommands: ["etl-govramp", "etl-hitrust", "etl-soc2-tsc"]
 ---
@@ -29,34 +29,24 @@ in an open repo. Treat them differently:
 | **HITRUST CSF**                       | Contractually licensed content                                                                                                    | **Never bundled.** BYOC only — you supply your own MyCSF/CSF export under your own license, and it's parsed locally. It is never committed, never uploaded anywhere by this tool, and stays out of git via `.gitignore`.                                                                                                                                                                                                                                                                                                                                                 |
 | **SOC 2 Trust Services Criteria**     | Licensed by the AICPA; its terms bar derivative works and commercial use, and object to LLM use                                   | **Never bundled.** BYOC only: `policyforge etl-soc2-tsc` reads a text export of your own copy into `local_content/`, and your own copy of the AICPA's 2020 mapping to 800-53 if you have one (read as partial; ids NIST changed since Rev 4 flagged). Nothing is fetched from the AICPA. Read `data/frameworks/soc2-tsc/README.md` first                                                                                                                                                                                                                                 |
 
-## Bringing a second NIST-family catalog: write the catalog's full name
+## `NIST` alone means SP 800-53; every other NIST catalog takes its full name
 
 Each NIST-family catalog has its own key — `nist-800-53`, `nist-800-171`,
 `nist-800-172`, `nist-800-137`, `nist-csf` — so you can load more than one
 and a citation naming one of them cannot resolve against another.
 
-**Cite them by their full names.** `[NIST 800-171 03.01.01]` resolves;
-`[NIST AC-2]` does not, once a second NIST-family catalog is loaded, because
-`NIST` no longer says which one you mean. An ambiguous citation is reported
-as unresolved rather than being attached to whichever catalog happens to be
-first — a citation an assessor cannot follow is not evidence, and it is
+**`NIST` alone names SP 800-53**, whatever other NIST catalogs are loaded,
+so `[NIST AC-2]` always resolves to 800-53. **Cite every other NIST catalog
+by its full name:** `[NIST 800-171 03.01.01]` resolves; `[NIST 03.01.01]`
+does not, and is reported as unresolved rather than attached to a catalog
+by guess — a citation an assessor cannot follow is not evidence, and it is
 better to be told than to have it counted.
-
-Nothing changes while you load a single NIST-family catalog, which is what
-the bundled set is: `NIST` names exactly one thing and the short form keeps
-working.
-
-**If you are upgrading with documents already written**, they carry
-`[NIST AC-2]` short-form citations. Those keep resolving as they always have
-until you add a second NIST-family catalog; at that point regenerate, and
-`satisfies --strict` will fail until you do. That red is the point — it is
-the tool declining to guess which catalog you meant.
 
 Earlier releases filed every NIST-family catalog under one key, `nist`, and
 merged their requirement identifiers into one set, so an 800-171 identifier
 cited as 800-53 was found there and counted as evidence rather than reported.
 That is fixed; the history is under "Residual risk" in
-[docs/security-architecture.md](https://github.com/rdazzleman/policyforge/blob/main/docs/security-architecture.md).
+[Security architecture](/trust/security-architecture/#residual-risk).
 
 ## Two repositories, two sets of rights
 
@@ -172,13 +162,16 @@ local_content/CSFLibraryReport.csv
   provider: third-party (inferred: anthropic is a hosted API)
 ```
 
-**It fails closed in three places.** A provider nobody can classify is
+**It fails closed in five places.** A provider nobody can classify is
 third-party — `provider: local` names the protocol, not the network, so
 pointing it at a hosted vLLM endpoint classifies as third-party and the
 alias buys you nothing. A cascade is as exposed as its most exposed half,
-because which half answers depends on a runtime failure. And a framework
+because which half answers depends on a runtime failure. A framework
 directory with no manifest is licensed, which is the registry's existing
-rule.
+rule. A catalog file whose licence value is anything but an explicit
+`public-domain` is licensed. And a document whose `content_class` is a
+value PolicyForge doesn't recognise (a typo such as `licenced`) is read as
+licensed, and the command names the value.
 
 The inference is inference, and there is one honest case it gets wrong: a
 model you host behind a public DNS name. Say so, and the declaration

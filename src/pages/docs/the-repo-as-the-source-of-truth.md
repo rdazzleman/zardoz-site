@@ -1,7 +1,7 @@
 ---
 layout: ../../layouts/Doc.astro
 title: "The repo as the source of truth"
-description: "PolicyForge 1.7.0 documentation: The repo as the source of truth."
+description: "PolicyForge 1.8.0 documentation: The repo as the source of truth."
 source: "README.md at PolicyForge 1.7.0, lines 1459-1666"
 licensedCommands: []
 ---

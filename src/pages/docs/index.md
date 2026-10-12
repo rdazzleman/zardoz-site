@@ -1,7 +1,7 @@
 ---
 layout: ../../layouts/Doc.astro
 title: "Overview"
-description: "PolicyForge 1.7.0 documentation: Overview."
+description: "PolicyForge 1.8.0 documentation: Overview."
 source: "README.md at PolicyForge 1.7.0, lines 2-20"
 licensedCommands: []
 ---

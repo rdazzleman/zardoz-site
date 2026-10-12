@@ -1,7 +1,7 @@
 ---
 layout: ../../layouts/Doc.astro
 title: "Organization-defined parameters"
-description: "PolicyForge 1.7.0 documentation: Organization-defined parameters."
+description: "PolicyForge 1.8.0 documentation: Organization-defined parameters."
 source: "README.md at PolicyForge 1.7.0, lines 2288-2353"
 licensedCommands: []
 ---

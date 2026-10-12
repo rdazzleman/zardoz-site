@@ -1,7 +1,7 @@
 ---
 layout: ../../layouts/Doc.astro
 title: "Grading the prompts"
-description: "PolicyForge 1.7.0 documentation: Grading the prompts."
+description: "PolicyForge 1.8.0 documentation: Grading the prompts."
 source: "README.md at PolicyForge 1.7.0, lines 2097-2216"
 licensedCommands: []
 ---

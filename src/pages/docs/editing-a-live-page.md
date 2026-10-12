@@ -1,7 +1,7 @@
 ---
 layout: ../../layouts/Doc.astro
 title: "Editing a live page"
-description: "PolicyForge 1.7.0 documentation: Editing a live page."
+description: "PolicyForge 1.8.0 documentation: Editing a live page."
 source: "README.md at PolicyForge 1.7.0, lines 921-1066"
 licensedCommands: []
 ---
@@ -50,15 +50,20 @@ set, resolving the pages from the topic registry:
 ```yaml
 # config/topics.yaml
 - name: Identity Lifecycle & Access Review
+  policy: Access Control
   owner: IAM Engineering
   nist_controls: [AC-1, AC-2, AC-3, ...]
   confluence:
     space: SEC
     pages:
-      policy: Access Control Policy
       standard: Access Control Standard
       procedure: Access Review Procedure
 ```
+
+The Policy's page is declared once, on the Policy, under `policies:` in the
+same file, because several topics share it; `edit-topic` includes the
+Policy a topic's Standard sits under as a candidate beside the topic's own
+pages.
 
 ```
 policyforge edit-topic   --instruction "Access reviews move from quarterly to monthly."   --topic-name "Identity Lifecycle & Access Review"   --host https://yourorg.atlassian.net/wiki
@@ -102,7 +107,13 @@ so the defaults are conservative:
   It now overwrites only a page whose latest version this tool wrote — every
   write is stamped in its version message — or whose version `pull` has
   already brought into the repository; anything else is reported as moved,
-  not published, and fails the run.
+  not published, and fails the run. A page that already says what the file
+  says is left alone. An edit made here with `edit-confluence` or
+  `edit-topic --host` is stamped as a live edit: `publish` won't overwrite
+  it until `pull` brings it into the repository, and both edit commands
+  print that `pull` command. (A page edited live with 1.7 or earlier still
+  carries the publish stamp, so `pull` it before your next
+  `publish --apply`.)
 
 - **Macro refusal.** The edit path is storage format → markdown → edit →
   storage format, which is lossless only for the `code` macro this project's

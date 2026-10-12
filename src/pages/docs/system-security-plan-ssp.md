@@ -1,7 +1,7 @@
 ---
 layout: ../../layouts/Doc.astro
 title: "System Security Plan (SSP)"
-description: "PolicyForge 1.7.0 documentation: System Security Plan (SSP)."
+description: "PolicyForge 1.8.0 documentation: System Security Plan (SSP)."
 source: "README.md at PolicyForge 1.7.0, lines 2355-2431"
 licensedCommands: []
 ---

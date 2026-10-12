@@ -1,12 +1,12 @@
 ---
 layout: ../../layouts/Doc.astro
 title: "Running in a container"
-description: "PolicyForge 1.7.0 documentation: Running in a container."
+description: "PolicyForge 1.8.0 documentation: Running in a container."
 source: "README.md at PolicyForge 1.7.0, lines 2515-2591"
 licensedCommands: ["etl-govramp", "etl-hitrust"]
 ---
 
-The image holds the CLI, the four public framework catalogs and a built
+The image holds the CLI, the public framework catalogs and a built
 crosswalk. It runs as a non-root user, and every dependency comes from a
 hashed lock at the versions CI tests. Your own material stays out of it:
 
@@ -32,7 +32,8 @@ the same layout as the repository:
 | `config/config.yaml` → `/app/config/config.yaml:ro` | model and provider settings; without it, commands that need no model still work               |
 | `config/topics.yaml` → `/app/config/topics.yaml:ro` | the topic registry (`coverage`, `addresses`, `/topics`)                                       |
 | `local_content/` → `/app/local_content`             | BYOC exports and the catalogs parsed from them (`etl-hitrust`, `etl-govramp` write back here) |
-| a volume → `/app/output`                            | drafts, version history, the synced corpus and the model-call ledger                          |
+| `docs/` → `/app/docs`                               | the content tree: drafted documents (`generate` writes here; without this mount, `--rm` loses them), and what `check` and `publish` read |
+| a volume → `/app/output`                            | version history, the synced corpus and the model-call ledger                                  |
 
 **Credentials** come in as environment variables, named the way your config
 names them. `-e ANTHROPIC_API_KEY` with no value passes the variable through
@@ -49,7 +50,7 @@ docker run --rm \
 ```
 
 A named volume for `output/` is writable by the image's user as it is. To
-write into a host directory on Linux instead, add
+write into a host directory on Linux instead (`docs/`, for one), add
 `--user "$(id -u):$(id -g)"` so the files are yours.
 
 The image already has the project layout at `/app`, so `policyforge init` is

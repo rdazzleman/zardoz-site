@@ -1,7 +1,7 @@
 ---
 layout: ../../layouts/Doc.astro
 title: "Document hierarchy: Policy > Standard > Procedure"
-description: "PolicyForge 1.7.0 documentation: Document hierarchy: Policy > Standard > Procedure."
+description: "PolicyForge 1.8.0 documentation: Document hierarchy: Policy > Standard > Procedure."
 source: "README.md at PolicyForge 1.7.0, lines 1668-1702, revised for 1.8.0 from its changelog and command line"
 licensedCommands: []
 ---

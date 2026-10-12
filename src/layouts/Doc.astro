@@ -2,7 +2,8 @@
 /**
  * Layout for the documentation pages under /docs. Their text is the
  * PolicyForge 1.7.0 README, moved here when the README was cut down to
- * install and quick start. Each page names the README lines it came from.
+ * install and quick start, then checked page by page against 1.8.0 and
+ * corrected. Each page names the README lines it came from.
  */
 import Base from "./Base.astro";
 import { docsGroups, docsOrder } from "../lib/docsGroups";
@@ -29,7 +30,7 @@ const next = index >= 0 && index < docsOrder.length - 1 ? docsOrder[index + 1] :
         <details class="docs-toc" open>
           <summary>
             <span class="eyebrow">Docs</span>
-            <span class="muted small">PolicyForge 1.7.0</span>
+            <span class="muted small">PolicyForge 1.8.0</span>
           </summary>
           {
             docsGroups.map((g) => (

@@ -1,7 +1,7 @@
 ---
 layout: ../../layouts/Doc.astro
 title: "What's built"
-description: "PolicyForge 1.7.0 documentation: What's built."
+description: "PolicyForge 1.8.0 documentation: What's built."
 source: "README.md at PolicyForge 1.7.0, lines 3095-3292"
 licensedCommands: ["etl-hitrust"]
 ---
@@ -60,7 +60,7 @@ What already exists, kept as the record of what the prose above refers to.
   resolution were sized for a model that starts answering immediately. A reasoning model
   spends the budget deliberating and returns nothing, and a truncation bills a retry at
   eight times the ceiling, so the original figures scored reasoning models as worse at
-  the task *and* cost more. See `MEASUREMENTS.md`
+  the task *and* cost more. See [Measurements](/trust/measurements/)
 - [x] Deontic strength analysis (`content/deontic.py`) — reports a sentence that carries
   a framework citation and does not bind. The source controls are written in obligation
   language, so a Standard rendering a cited requirement as "teams should consider" has
@@ -101,8 +101,9 @@ data. What remains of the idea — per-team bundles, evidence artifacts and the
 reverse view — is in theme 2 above.
 
 - [x] **Topic registry** (`config/topics.yaml` + `topics/registry.py`) — topic name,
-  owner, cadence, NIST anchors, evidence artifacts, with a 20-topic starter set in
-  `config/topics.example.yaml` that fully covers all three baselines
+  owner, cadence, NIST anchors, evidence artifacts, with a 27-topic starter set,
+  grouped under 12 Policies, in `config/topics.example.yaml` that fully covers all three
+  baselines
 - [x] **Coverage and ownership analysis** (`policyforge coverage`) — orphaned and
   contested controls, unknown vs out-of-scope anchors, per-team rollup, and
   cross-framework reachability via the crosswalk. `--strict` for CI, `--json` for
