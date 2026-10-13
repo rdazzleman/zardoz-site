@@ -7,7 +7,9 @@ so the guards live here, in this build:
   1. no internal issue numbers (the repo's test_public_docs_cite_no_issue_numbers)
   2. every page that names a licensed-framework command names the plugin and the contact
      (test_docs_name_the_plugin, first check)
-  3. no perishable session names, only stable handles (same test, second check)
+  3. no agent name at all, session name or stable handle: the handles are real GitHub
+     users and these pages are public (80's ruling on issue 289, 2026-10-13; it
+     replaced the repo test's "stable handles only")
   4. every link to the contact address on these pages carries exactly the plugin subject the
      CLI uses (test_docs_plugin_contact_subject); the layout's callout takes it from site.ts
 
@@ -39,11 +41,13 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 REPO = "https://github.com/rdazzleman/policyforge"
 
-#: The team's stable handles (CLAUDE.md "stable handle"). Any other `policyforge-<hex><hex>`
-#: on a public page is a perishable session name. Copied by hand from the repo's
-#: `review_lines.STABLE_HANDLES`: a handle added to the team is added here.
-STABLE_HANDLES = {f"policyforge-{h}" for h in ("80", "1d", "9b", "ba", "b5", "5b")}
-SESSION_NAME = re.compile(r"\bpolicyforge-[0-9a-f]{2}\b")
+#: An agent's name: a stable handle (`policyforge-80`) or a session name
+#: (`policyforge-d8`). Neither belongs on a public page, so the pattern takes any two
+#: letters or digits, not only the handles: a list of handles would let the next
+#: session name through. Credit on a page is "the team". The pattern assumes a name is
+#: exactly two characters standing alone: `policyforge-output` (a docker volume) and the
+#: heading slug `what-policyforge-is-architecturally` are longer words and pass.
+AGENT_NAME = re.compile(r"(?<![\w-])policyforge-[0-9a-z]{2}(?![\w-])")
 
 PLUGIN = "licensed-framework plugin"
 CONTACT = "info@zardoz.io"
@@ -249,9 +253,8 @@ def run(dist: Path) -> list[str]:
         refs = issue_citations(text)
         if refs:
             problems.append(f"issue number: {path}: {refs}")
-        for name in sorted(set(SESSION_NAME.findall(text))):
-            if name not in STABLE_HANDLES:
-                problems.append(f"perishable session name: {path}: {name}")
+        for name in sorted(set(AGENT_NAME.findall(text))):
+            problems.append(f"agent name on a public page: {path}: {name}")
     trust_md = {p: t for p, t in md.items() if "/trust/" in p or p.endswith("/compare.md")}
     contact_pages = {p: t for p, t in md.items() if "/trust/" in p or p.endswith("/compare.md") or "/docs/" in p}
     problems += [f"contact link: {x}" for x in contact_problems(contact_pages, plugin_subject())]
@@ -284,8 +287,11 @@ def self_test() -> list[str]:
     expect("issue number: a bare citation", issue_citations("see (#12) there") == ["#12"])
     expect("issue number: a prefixed citation", issue_citations("the GH#459 thread") == ["GH#459"])
     expect("issue number: a colour and an anchor pass", issue_citations("#1e90ff and [x](#2-quick-start) and C#") == [])
-    expect("session name: a perishable name fails", [n for n in SESSION_NAME.findall("ask policyforge-d8") if n not in STABLE_HANDLES] == ["policyforge-d8"])
-    expect("session name: a stable handle passes", [n for n in SESSION_NAME.findall("policyforge-80 read it") if n not in STABLE_HANDLES] == [])
+    expect("agent name: a session name fails", AGENT_NAME.findall("ask policyforge-d8") == ["policyforge-d8"])
+    expect("agent name: a stable handle fails too", AGENT_NAME.findall("Found by policyforge-80.") == ["policyforge-80"])
+    expect("agent name: a non-hex session name fails", AGENT_NAME.findall("product policyforge-ag") == ["policyforge-ag"])
+    expect("agent name: a longer word passes", AGENT_NAME.findall("-v policyforge-output:/app/output") == [])
+    expect("agent name: a heading slug passes", AGENT_NAME.findall("[x](#what-policyforge-is-architecturally)") == [])
     cmds = {"etl-hitrust", "etl-govramp", "etl-soc2-tsc"}
     expect("plugin: a page naming etl-hitrust without the plugin fails",
            len(pages_missing_the_plugin({"/x/": "run etl-hitrust on your export"}, cmds)) == 1)

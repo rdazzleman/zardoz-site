@@ -196,7 +196,7 @@ ______________________________________________________________________
   request the code is meant to send — and, since `82d4b26`, the request a
   config-built run does send — but not what a config-built run sent inside
   the window. Epochs 15–19 were measured with `--model` and each says so.
-  Found by policyforge-80.
+  Found by the team.
 
 ### What each suite tests
 
