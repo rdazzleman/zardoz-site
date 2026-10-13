@@ -3,11 +3,21 @@
  * topics with seven models (PolicyForge issue 286; the lineup is the user's,
  * recorded on 286 as comment 6468).
  *
- * Every value here comes from a published run, copied verbatim: the document
- * text, the ledger's cost and time, and the Zardoz transcripts. Nothing is
- * written by hand. Until the runs exist, `status` is "pending", the values
- * are null, and the page says so instead of showing anything that looks like
- * output.
+ * The run: six topics, the fictional Roritor Health profile, release/1.8 at
+ * 0cce41e3, 2026-10-13, by b5 (286 comments 6596 and 6597). Its tree is
+ * C:\policyforge-local\example-output\roritor-1.8\ on the team's machine.
+ *
+ * Every figure is copied from that run, never written by hand: a model's cost
+ * is its ledger total (`run_usd_ledger` in its run.json), the topic cost is
+ * the sum of that topic's step costs, the time is the sum of its steps'
+ * seconds, and the document counts are the files in its standards/,
+ * procedures/ and policies/. Costs are what OpenRouter billed, one sample each
+ * at the engine's default effort (80's ruling, 286 comment 6600). DeepSeek's is
+ * a floor: the pass was billed $0.86 that no ledger row holds.
+ *
+ * The comparison excerpts are files in src/content/examples/, cut from each
+ * Standard by line range and checked to be a verbatim slice of it; each names
+ * its source lines. They are never edited here.
  *
  * `standIn` marks a demo answer copied from the PolicyForge docs, which
  * answers over a different document set. Those are layout stand-ins for the
@@ -19,16 +29,22 @@ export type Model = {
   label: string;
   id: string;
   where: string;
-  /** From the run's ledger, as it reports it; null until the run exists. */
+  /** The ledger total for the pass, as OpenRouter billed it; null until the run exists. */
   costUsd: number | null;
   costSource: "billed" | "estimated" | null;
+  /** The ledger total misses billed spend, so the true cost is higher. */
+  floor?: boolean;
+  /** The comparison topic's cost alone (its synthesis, Standard and Procedure steps). */
+  topicUsd: number | null;
   minutes: number | null;
-  documents: number | null;
-  /** Deontic and citation warnings across the set, from the run's checks. */
-  warnings: number | null;
+  /** Of the run's six topics, how many got both a Standard and a Procedure. */
+  topicsDone: number | null;
+  docs: { standards: number; procedures: number; policies: number } | null;
+  /** What went wrong, in one line, when a model didn't finish everything. */
+  outcome?: string;
 };
 
-export type Draft = { model: string; text: string | null; path: string | null };
+export type Draft = { model: string; path: string | null; note?: string };
 
 export type Turn = {
   question: string;
@@ -44,15 +60,13 @@ export type Turn = {
 
 const HOSTED = "Hosted, via OpenRouter";
 
-/** A model in the lineup, with no figures until its run exists. */
-function run(key: string, label: string, id: string, where: string): Model {
-  return { key, label, id, where, costUsd: null, costSource: null, minutes: null, documents: null, warnings: null };
-}
-
 export const examples = {
-  status: "pending" as "pending" | "published",
-  version: "1.8.0",
-  date: null as string | null,
+  /** "run": the documents exist but aren't published yet, so the links are off. */
+  status: "run" as "pending" | "run" | "published",
+  version: "1.8 (release branch, 0cce41e3)",
+  date: "2026-10-13" as string | null,
+  org: "Roritor Health, Inc.",
+  topicCount: 6,
   repoUrl: null as string | null,
   confluenceUrl: null as string | null,
 
@@ -62,27 +76,64 @@ export const examples = {
    * Gemini's is a preview id: re-check it is still listed before publishing.
    */
   models: [
-    run("local", "Local · Qwen3 14B", "qwen3:14b-pf32", "Your own machine"),
-    run("glm", "GLM 5.3", "z-ai/glm-5.3", HOSTED),
-    run("opus", "Claude Opus 5.5", "anthropic/claude-opus-5.5", HOSTED),
-    run("gpt", "GPT-6 Sol", "openai/gpt-6-sol", HOSTED),
-    run("gemini", "Gemini 3.1 Pro (preview)", "google/gemini-3.1-pro-preview", HOSTED),
-    run("deepseek", "DeepSeek V4 Pro", "deepseek/deepseek-v4-pro-0813", HOSTED),
-    run("llama", "Llama 3.2 1B", "meta-llama/llama-3.2-1b-instruct", HOSTED),
+    {
+      key: "local", label: "Local · Qwen3 14B", id: "qwen3:14b-pf32", where: "Your own machine",
+      costUsd: 0, costSource: null, topicUsd: 0, minutes: 24, topicsDone: 6,
+      docs: { standards: 6, procedures: 6, policies: 2 },
+    },
+    {
+      key: "glm", label: "GLM 5.3", id: "z-ai/glm-5.3", where: HOSTED,
+      costUsd: 1.9314, costSource: "billed", topicUsd: 0.1972, minutes: 52, topicsDone: 6,
+      docs: { standards: 6, procedures: 6, policies: 2 },
+    },
+    {
+      key: "opus", label: "Claude Opus 5.5", id: "anthropic/claude-opus-5.5", where: HOSTED,
+      costUsd: 10.362, costSource: "billed", topicUsd: 2.1845, minutes: 64, topicsDone: 5,
+      docs: { standards: 5, procedures: 5, policies: 2 },
+      outcome: "One topic's merged requirements ran past the 32,768-token reply budget and were cut off, so nothing was written for Identity Lifecycle & Access Review.",
+    },
+    {
+      key: "gpt", label: "GPT-6 Sol", id: "openai/gpt-6-sol", where: HOSTED,
+      costUsd: 1.6056, costSource: "billed", topicUsd: 0.29, minutes: 26, topicsDone: 6,
+      docs: { standards: 6, procedures: 6, policies: 2 },
+    },
+    {
+      key: "gemini", label: "Gemini 3.1 Pro (preview)", id: "google/gemini-3.1-pro-preview", where: HOSTED,
+      costUsd: 3.5695, costSource: "billed", topicUsd: 0.5422, minutes: 42, topicsDone: 6,
+      docs: { standards: 6, procedures: 6, policies: 2 },
+    },
+    {
+      key: "deepseek", label: "DeepSeek V4 Pro", id: "deepseek/deepseek-v4-pro-0813", where: HOSTED,
+      costUsd: 2.3832, costSource: "billed", floor: true, topicUsd: 0.5697, minutes: 131, topicsDone: 2,
+      docs: { standards: 2, procedures: 2, policies: 0 },
+      outcome: "Finished 2 of 6 topics at the default settings: on the other four, its reasoning used the whole reply budget and returned no text.",
+    },
+    {
+      key: "llama", label: "Llama 3.2 1B", id: "meta-llama/llama-3.2-1b-instruct", where: HOSTED,
+      costUsd: 0.0203, costSource: "billed", topicUsd: 0.0004, minutes: 29, topicsDone: 0,
+      docs: { standards: 5, procedures: 0, policies: 0 },
+      outcome: "Wrote five Standards with no title, so no Procedure could be drafted from them; its sixth failed the AI RMF Playbook check.",
+    },
   ] satisfies Model[],
 
   /** One requirement, as each model's Standard wrote it. */
   comparison: {
-    topic: "Account Management",
-    section: "Account recertification",
-    controls: ["NIST 800-53 AC-2(j)", "HIPAA 164.308(a)(4)"],
-    /** One per model, keyed by `models[].key`; the page lists them in that order. */
-    drafts: [] as Draft[],
+    topic: "Incident Response",
+    section: "Incident response training: who is trained, and when",
+    /** Keyed by `models[].key`; a model with an excerpt file needs no entry here. */
+    drafts: [
+      {
+        model: "llama",
+        path: null,
+        note: "Its Standard has no requirements to compare: below its title is a single heading of “1.1.1.1…”, 19,598 characters long.",
+      },
+    ] as Draft[],
   },
 
   /** One topic's document set, top to bottom. */
   tree: {
-    topic: "Account Management",
+    topic: "Backup, Restore & Contingency",
+    policy: "Continuity",
     docs: [
       { tier: "Policy", says: "What the organization commits to, and who is accountable." },
       { tier: "Standard", says: "The measurable requirements, each citing the controls it meets." },
@@ -145,9 +196,9 @@ export const examples = {
 
 export const modelByKey = Object.fromEntries(examples.models.map((m) => [m.key, m]));
 
-/** Each model's paragraph, in lineup order; a model with no draft yet gets an empty one. */
+/** One entry per model, in lineup order; the page finds each excerpt file by `model`. */
 export const comparisonDrafts: Draft[] = examples.models.map(
-  (m) => examples.comparison.drafts.find((d) => d.model === m.key) ?? { model: m.key, text: null, path: null },
+  (m) => examples.comparison.drafts.find((d) => d.model === m.key) ?? { model: m.key, path: null },
 );
 
 /** The cost table's rows: cheapest first, a model with no figure yet last; lineup order breaks ties. */
@@ -167,5 +218,5 @@ export const localCount = inWords(examples.models.filter((m) => m.where === "You
 /** The label every excerpt carries. */
 export function stamp(model: Model): string {
   const when = examples.date ?? "date of run";
-  return `Example output, generated by ${model.id} with PolicyForge ${examples.version} on ${when}. Not legal or compliance advice.`;
+  return `Example output, generated by ${model.id} with PolicyForge ${examples.version} on ${when}. ${examples.org} and its teams are fictional. Not legal or compliance advice.`;
 }

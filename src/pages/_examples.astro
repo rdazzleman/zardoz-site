@@ -3,15 +3,23 @@ import Base from "../layouts/Base.astro";
 import Head from "../components/Head.astro";
 import { examples, modelByKey, stamp, comparisonDrafts, byCost, modelCount, hostedCount, localCount } from "../lib/examples";
 
+// The comparison excerpts: one markdown file per model, cut verbatim from its Standard.
+const excerpts = Object.fromEntries(
+  Object.values(import.meta.glob("../content/examples/*.md", { eager: true })).map((mod: any) => [mod.frontmatter.model, mod]),
+);
+
 const pending = examples.status === "pending";
+const unpublished = examples.status === "run";
 const standIns = examples.demo.filter((t) => t.standIn).length;
-const money = (v: number | null) => (v === null ? "—" : v === 0 ? "$0" : `$${v.toFixed(2)}`);
-const num = (v: number | null) => (v === null ? "—" : String(v));
+const money = (v: number | null) =>
+  v === null ? "—" : v === 0 ? "$0" : v < 0.01 ? "under $0.01" : `$${v.toFixed(2)}`;
+const docs = (d: { standards: number; procedures: number; policies: number } | null) =>
+  d === null ? "—" : `${d.standards} / ${d.procedures} / ${d.policies}`;
 ---
 
 <Base
   title="Examples"
-  description={`PolicyForge run for real on public frameworks with ${modelCount} AI models, ${localCount} on a laptop: the documents as generated, what each run cost, and questions answered from them.`}
+  description={`PolicyForge run for real on public frameworks with ${modelCount} AI models, ${localCount} on a laptop: the documents as generated, what each run cost, and where models fell short.`}
 >
   <main>
     <section class="page-hero">
@@ -19,9 +27,10 @@ const num = (v: number | null) => (v === null ? "—" : String(v));
         <p class="eyebrow">Examples</p>
         <h1>Real output, unedited.</h1>
         <p class="lede">
-          We ran PolicyForge on public-framework topics with {modelCount} AI models, {localCount} on a
-          laptop and {hostedCount} hosted. Every document is published exactly as it was generated, with its model,
-          version and cost.
+          We ran PolicyForge on {examples.topicCount} topics for {examples.org}, a fictional
+          healthcare company, with {modelCount} AI models: {localCount} on a laptop and
+          {hostedCount} hosted. Every document is shown exactly as it was generated, with its
+          model, version and cost, including the models that didn’t finish.
         </p>
         {
           pending && (
@@ -29,6 +38,15 @@ const num = (v: number | null) => (v === null ? "—" : String(v));
               <strong>Preview.</strong> The example runs haven't happened yet, so this page shows
               where each piece will go. Nothing on it is output yet
               {standIns > 0 && <>, apart from {standIns} demo answers borrowed from the PolicyForge docs and marked as such</>}.
+            </p>
+          )
+        }
+        {
+          unpublished && (
+            <p class="callout warn">
+              <strong>Preview.</strong> The documents and figures below are the real run of{" "}
+              {examples.date}. They aren't published yet, so the links are off
+              {standIns > 0 && <>, and {standIns} of the demo answers further down are stand-ins from the PolicyForge docs, marked as such</>}.
             </p>
           )
         }
@@ -57,7 +75,9 @@ const num = (v: number | null) => (v === null ? "—" : String(v));
           <p class="eyebrow">Same control, {modelCount} models</p>
           <h2>One requirement, as each model wrote it.</h2>
           <p class="lede">
-            Each draft is grounded in the same framework text and cites the same controls. What
+            Every model drafted the {examples.comparison.topic} Standard from the same framework
+            text. Below is the requirement each one opens its training section with: who is
+            trained, and when (NIST IR-2). It is copied as written, citations included. What
             changes is the prose, and the bill.
           </p>
         </div>
@@ -65,6 +85,7 @@ const num = (v: number | null) => (v === null ? "—" : String(v));
           {
             comparisonDrafts.map((d) => {
               const m = modelByKey[d.model];
+              const Excerpt = excerpts[d.model]?.Content;
               return (
                 <figure class="doc" style="margin: 0;">
                   <div class="doc-head">
@@ -72,19 +93,16 @@ const num = (v: number | null) => (v === null ? "—" : String(v));
                       <div class="doc-kind">{m.label} · {m.where}</div>
                       <div class="doc-title">{examples.comparison.section}</div>
                     </div>
-                    <span class="owner">{money(m.costUsd)} for the set</span>
+                    <span class="owner">{money(m.topicUsd)} for this topic</span>
                   </div>
-                  <div class="doc-body">
-                    {d.text ? (
-                      <p>{d.text}</p>
+                  <div class="doc-body excerpt">
+                    {Excerpt ? (
+                      <Excerpt />
+                    ) : d.note ? (
+                      <p class="pending-text">{d.note}</p>
                     ) : (
                       <p class="pending-text">This model's paragraph goes here, copied from its Standard.</p>
                     )}
-                    <div class="cites" style="grid-column: auto; margin-top: 0;">
-                      {examples.comparison.controls.map((c) => (
-                        <span class="chip">{c}</span>
-                      ))}
-                    </div>
                   </div>
                   <figcaption class="doc-foot">
                     <span>{stamp(m)}</span>
@@ -101,32 +119,45 @@ const num = (v: number | null) => (v === null ? "—" : String(v));
               <tr>
                 <th scope="col">Model</th>
                 <th scope="col">Where it runs</th>
-                <th scope="col">Documents</th>
+                <th scope="col">Topics finished</th>
+                <th scope="col">Standards / Procedures / Policies</th>
                 <th scope="col">Cost</th>
                 <th scope="col">Time</th>
-                <th scope="col">Check warnings</th>
               </tr>
             </thead>
             <tbody>
               {
                 byCost.map((m) => (
-                  <tr>
-                    <th scope="row">{m.label} <span class="muted small">{m.id}</span></th>
-                    <td>{m.where}</td>
-                    <td>{num(m.documents)}</td>
-                    <td>{money(m.costUsd)}{m.costSource && <span class="muted small"> {m.costSource}</span>}</td>
-                    <td>{m.minutes === null ? "—" : `${m.minutes} min`}</td>
-                    <td>{num(m.warnings)}</td>
-                  </tr>
+                  <>
+                    <tr class={m.outcome ? "has-outcome" : ""}>
+                      <th scope="row">{m.label} <span class="muted small">{m.id}</span></th>
+                      <td>{m.where}</td>
+                      <td>{m.topicsDone === null ? "—" : `${m.topicsDone} of ${examples.topicCount}`}</td>
+                      <td>{docs(m.docs)}</td>
+                      <td>
+                        {money(m.costUsd)}{m.floor && "+"}
+                        {m.costSource && <span class="muted small"> {m.costSource}{m.floor && ", a floor"}</span>}
+                      </td>
+                      <td>{m.minutes === null ? "—" : `${m.minutes} min`}</td>
+                    </tr>
+                    {m.outcome && (
+                      <tr class="outcome">
+                        <td colspan="6" class="muted small">{m.outcome}</td>
+                      </tr>
+                    )}
+                  </>
                 ))
               }
             </tbody>
           </table>
         </div>
         <p class="table-note">
-          Cheapest first. Every figure comes from the run's own log. A hosted model's cost is marked billed when the
-          provider reported it, and estimated otherwise. The local model costs nothing to run, and
-          nothing it read left the machine.
+          Cheapest first. Each cost is the run’s own ledger total for the {examples.topicCount}
+          topics, as OpenRouter billed it: one sample, at the engine’s default effort, so treat
+          it as one run rather than a rate. DeepSeek’s is a floor: the run was billed $0.86 more
+          than its ledgers hold, probably for DeepSeek calls that returned no text. Time is the run’s wall clock. A topic is finished when it has
+          both a Standard and a Procedure; a Policy was drafted only where every Standard under
+          it was. The local model costs nothing to run, and nothing it read left the machine.
         </p>
       </div>
     </section>
@@ -137,9 +168,9 @@ const num = (v: number | null) => (v === null ? "—" : String(v));
           <p class="eyebrow">One topic, top to bottom</p>
           <h2>{examples.tree.topic}: the whole set.</h2>
           <p class="lede">
-            A Policy, the topic's Standard under it, and the Procedure that carries it out: from
-            what the organization commits to down to who does what. Read them where they'd
-            actually live.
+            The {examples.tree.policy} Policy, the topic's Standard under it, and the Procedure
+            that carries it out: from what the organization commits to down to who does what.
+            Read them where they'd actually live.
           </p>
         </div>
         <ol class="tier-list">
@@ -227,6 +258,10 @@ const num = (v: number | null) => (v === null ? "—" : String(v));
   .compare { display: grid; gap: 1.25rem; }
   @media (min-width: 62rem) { .compare { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   .compare .doc-body p { line-height: 1.55; }
+  .excerpt :global(p), .excerpt :global(li) { line-height: 1.55; }
+  .excerpt :global(ul), .excerpt :global(ol) { margin: 0; padding-left: 1.25rem; display: grid; gap: 0.35rem; }
+  tr.has-outcome th, tr.has-outcome td { border-bottom: 0; }
+  tr.outcome td { padding-top: 0; }
   .compare .doc-foot { font-size: 0.75rem; }
   .pending-text { color: var(--muted); font-style: italic; }
   .is-off { opacity: 0.45; cursor: not-allowed; }
