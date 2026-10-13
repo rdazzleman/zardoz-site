@@ -1,7 +1,7 @@
 ---
 import Base from "../layouts/Base.astro";
 import Head from "../components/Head.astro";
-import { examples, modelByKey, stamp } from "../lib/examples";
+import { examples, modelByKey, stamp, comparisonDrafts, byCost, modelCount, hostedCount, localCount } from "../lib/examples";
 
 const pending = examples.status === "pending";
 const standIns = examples.demo.filter((t) => t.standIn).length;
@@ -11,7 +11,7 @@ const num = (v: number | null) => (v === null ? "—" : String(v));
 
 <Base
   title="Examples"
-  description="PolicyForge run for real on public frameworks with three AI models, one on a laptop: the documents as generated, what each run cost, and questions answered from them."
+  description={`PolicyForge run for real on public frameworks with ${modelCount} AI models, ${localCount} on a laptop: the documents as generated, what each run cost, and questions answered from them.`}
 >
   <main>
     <section class="page-hero">
@@ -19,8 +19,8 @@ const num = (v: number | null) => (v === null ? "—" : String(v));
         <p class="eyebrow">Examples</p>
         <h1>Real output, unedited.</h1>
         <p class="lede">
-          We ran PolicyForge on public-framework topics with three AI models, one on a laptop and
-          two hosted. Every document is published exactly as it was generated, with its model,
+          We ran PolicyForge on public-framework topics with {modelCount} AI models, {localCount} on a
+          laptop and {hostedCount} hosted. Every document is published exactly as it was generated, with its model,
           version and cost.
         </p>
         {
@@ -54,7 +54,7 @@ const num = (v: number | null) => (v === null ? "—" : String(v));
     <section class="section">
       <div class="container">
         <div class="section-head">
-          <p class="eyebrow">Same control, three models</p>
+          <p class="eyebrow">Same control, {modelCount} models</p>
           <h2>One requirement, as each model wrote it.</h2>
           <p class="lede">
             Each draft is grounded in the same framework text and cites the same controls. What
@@ -63,7 +63,7 @@ const num = (v: number | null) => (v === null ? "—" : String(v));
         </div>
         <div class="compare">
           {
-            examples.comparison.drafts.map((d) => {
+            comparisonDrafts.map((d) => {
               const m = modelByKey[d.model];
               return (
                 <figure class="doc" style="margin: 0;">
@@ -100,7 +100,7 @@ const num = (v: number | null) => (v === null ? "—" : String(v));
             <thead>
               <tr>
                 <th scope="col">Model</th>
-                <th scope="col">Runs</th>
+                <th scope="col">Where it runs</th>
                 <th scope="col">Documents</th>
                 <th scope="col">Cost</th>
                 <th scope="col">Time</th>
@@ -109,7 +109,7 @@ const num = (v: number | null) => (v === null ? "—" : String(v));
             </thead>
             <tbody>
               {
-                examples.models.map((m) => (
+                byCost.map((m) => (
                   <tr>
                     <th scope="row">{m.label} <span class="muted small">{m.id}</span></th>
                     <td>{m.where}</td>
@@ -124,7 +124,7 @@ const num = (v: number | null) => (v === null ? "—" : String(v));
           </table>
         </div>
         <p class="table-note">
-          Every figure comes from the run's own log. A hosted model's cost is marked billed when the
+          Cheapest first. Every figure comes from the run's own log. A hosted model's cost is marked billed when the
           provider reported it, and estimated otherwise. The local model costs nothing to run, and
           nothing it read left the machine.
         </p>
@@ -137,8 +137,9 @@ const num = (v: number | null) => (v === null ? "—" : String(v));
           <p class="eyebrow">One topic, top to bottom</p>
           <h2>{examples.tree.topic}: the whole set.</h2>
           <p class="lede">
-            Each topic is three documents, from what the organization commits to down to who does
-            what. Read them where they'd actually live.
+            A Policy, the topic's Standard under it, and the Procedure that carries it out: from
+            what the organization commits to down to who does what. Read them where they'd
+            actually live.
           </p>
         </div>
         <ol class="tier-list">
@@ -224,7 +225,7 @@ const num = (v: number | null) => (v === null ? "—" : String(v));
 
 <style>
   .compare { display: grid; gap: 1.25rem; }
-  @media (min-width: 62rem) { .compare { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  @media (min-width: 62rem) { .compare { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   .compare .doc-body p { line-height: 1.55; }
   .compare .doc-foot { font-size: 0.75rem; }
   .pending-text { color: var(--muted); font-style: italic; }
