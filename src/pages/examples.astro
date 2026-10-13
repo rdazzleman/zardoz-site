@@ -1,7 +1,6 @@
 ---
 import Base from "../layouts/Base.astro";
-import Head from "../components/Head.astro";
-import { examples, modelByKey, stamp, comparisonDrafts, byCost, modelCount, hostedCount, localCount } from "../lib/examples";
+import { examples, modelByKey, stamp, comparisonDrafts, byCost, modelCount, hostedCount, localCount, topicWords } from "../lib/examples";
 
 // The comparison excerpts: one markdown file per model, cut verbatim from its Standard.
 const excerpts = Object.fromEntries(
@@ -9,8 +8,6 @@ const excerpts = Object.fromEntries(
 );
 
 const pending = examples.status === "pending";
-const unpublished = examples.status === "run";
-const standIns = examples.demo.filter((t) => t.standIn).length;
 const money = (v: number | null) =>
   v === null ? "—" : v === 0 ? "$0" : v < 0.01 ? "under $0.01" : `$${v.toFixed(2)}`;
 const docs = (d: { standards: number; procedures: number; policies: number } | null) =>
@@ -19,7 +16,7 @@ const docs = (d: { standards: number; procedures: number; policies: number } | n
 
 <Base
   title="Examples"
-  description={`PolicyForge run for real on public frameworks with ${modelCount} AI models, ${localCount} on a laptop: the documents as generated, what each run cost, and where models fell short.`}
+  description={`PolicyForge run for real on public frameworks with ${modelCount} AI models, ${localCount} on a laptop: the output as generated, what each run cost, and where models fell short.`}
 >
   <main>
     <section class="page-hero">
@@ -27,42 +24,30 @@ const docs = (d: { standards: number; procedures: number; policies: number } | n
         <p class="eyebrow">Examples</p>
         <h1>Real output, unedited.</h1>
         <p class="lede">
-          We ran PolicyForge on {examples.topicCount} topics for {examples.org}, a fictional
-          healthcare company, with {modelCount} AI models: {localCount} on a laptop and
-          {hostedCount} hosted. Every document is shown exactly as it was generated, with its
-          model, version and cost, including the models that didn’t finish.
+          We ran PolicyForge on {topicWords} topics for {examples.org}, a fictional
+          healthcare company, with {modelCount} AI models: {localCount} on a laptop and{" "}
+          {hostedCount} hosted, on {examples.date}. Everything below is shown exactly as it was
+          generated, with its model, version and cost, including the models that didn’t
+          finish.
         </p>
         {
           pending && (
             <p class="callout warn">
               <strong>Preview.</strong> The example runs haven't happened yet, so this page shows
               where each piece will go. Nothing on it is output yet
-              {standIns > 0 && <>, apart from {standIns} demo answers borrowed from the PolicyForge docs and marked as such</>}.
-            </p>
-          )
-        }
-        {
-          unpublished && (
-            <p class="callout warn">
-              <strong>Preview.</strong> The documents and figures below are the real run of{" "}
-              {examples.date}. They aren't published yet, so the links are off
-              {standIns > 0 && <>, and {standIns} of the demo answers further down are stand-ins from the PolicyForge docs, marked as such</>}.
+              .
             </p>
           )
         }
         <div class="btn-row">
           {
-            examples.repoUrl ? (
+            examples.repoUrl && (
               <a class="btn btn-primary" href={examples.repoUrl}>Browse the documents on GitHub</a>
-            ) : (
-              <span class="btn btn-primary is-off" aria-disabled="true">Browse the documents on GitHub</span>
             )
           }
           {
-            examples.confluenceUrl ? (
+            examples.confluenceUrl && (
               <a class="btn btn-secondary" href={examples.confluenceUrl}>See them in Confluence</a>
-            ) : (
-              <span class="btn btn-secondary is-off" aria-disabled="true">See them in Confluence</span>
             )
           }
         </div>
@@ -152,7 +137,7 @@ const docs = (d: { standards: number; procedures: number; policies: number } | n
           </table>
         </div>
         <p class="table-note">
-          Cheapest first. Each cost is the run’s own ledger total for the {examples.topicCount}
+          Cheapest first. Each cost is the run’s own ledger total for the {topicWords}{" "}
           topics, as OpenRouter billed it: one sample, at the engine’s default effort, so treat
           it as one run rather than a rate. DeepSeek’s is a floor: the run was billed $0.86 more
           than its ledgers hold, probably for DeepSeek calls that returned no text. Time is the run’s wall clock. A topic is finished when it has
@@ -162,6 +147,8 @@ const docs = (d: { standards: number; procedures: number; policies: number } | n
       </div>
     </section>
 
+    {
+      (examples.repoUrl || examples.confluenceUrl) && (
     <section class="section sunk">
       <div class="container">
         <div class="section-head">
@@ -190,49 +177,9 @@ const docs = (d: { standards: number; procedures: number; policies: number } | n
         </ol>
       </div>
     </section>
+      )
+    }
 
-    <section class="section band" id="ask">
-      <div class="container band-grid">
-        <div class="section-head" style="margin-bottom: 0;">
-          <p class="eyebrow">Ask Zardoz</p>
-          <h2>Ask it about these policies.</h2>
-          <p class="lede">
-            Every answer cites the paragraph it came from, or Zardoz says the documents don't cover
-            it. These are real questions with the answers it gave, recorded once and shown as is.
-          </p>
-        </div>
-        <div class="chat demo">
-          <div class="chat-label">Pick a question</div>
-          {
-            examples.demo.map((t, i) => (
-              <details class="turn" open={i === 0} name="ask">
-                <summary>
-                  <span class="q-text">{t.question}</span>
-                  <span class="q-shows">{t.shows}</span>
-                </summary>
-                <div class={`msg ${t.kind === "refusal" ? "refused" : ""}`}>
-                  <span class="who"><Head />Zardoz</span>
-                  {t.note && <p class="turn-note">({t.note})</p>}
-                  {t.answer ? (
-                    <p class={t.kind === "report" ? "report" : ""}>{t.answer}</p>
-                  ) : (
-                    <p class="pending-text">The real answer goes here, from the recorded session.</p>
-                  )}
-                  {t.cites.length > 0 && (
-                    <div class="cites" style="grid-column: auto; margin-top: 0;">
-                      {t.cites.map((c, n) => (
-                        <span class="chip">[{n + 1}] {c}</span>
-                      ))}
-                    </div>
-                  )}
-                  {t.standIn && <p class="stand-in">Stand-in from the PolicyForge docs, over a different document set.</p>}
-                </div>
-              </details>
-            ))
-          }
-        </div>
-      </div>
-    </section>
 
     <section class="section">
       <div class="container">
@@ -264,7 +211,6 @@ const docs = (d: { standards: number; procedures: number; policies: number } | n
   tr.outcome td { padding-top: 0; }
   .compare .doc-foot { font-size: 0.75rem; }
   .pending-text { color: var(--muted); font-style: italic; }
-  .is-off { opacity: 0.45; cursor: not-allowed; }
 
   .tier-list { list-style: none; padding: 0; display: grid; gap: 0.75rem; max-width: 50rem; }
   .tier-list li {
@@ -278,20 +224,4 @@ const docs = (d: { standards: number; procedures: number; policies: number } | n
   .tier { font-family: var(--serif); font-weight: 600; font-size: 1.0625rem; }
   .tier-links span { color: var(--muted); }
 
-  .demo .turn { border-bottom: 1px solid var(--band-rule); }
-  .demo .turn:last-child { border-bottom: 0; }
-  .demo summary {
-    list-style: none; cursor: pointer; display: grid; gap: 0.15rem;
-    padding: 0.95rem 1.4rem; font-weight: 600;
-  }
-  .demo summary::-webkit-details-marker { display: none; }
-  .demo summary::before { content: "You"; font-size: 0.6875rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--band-muted); font-weight: 600; }
-  .demo summary:hover .q-text, .demo summary:focus-visible .q-text { color: var(--band-accent); }
-  .demo .q-shows { font-size: 0.8125rem; font-weight: 400; color: var(--band-muted); }
-  .demo .turn[open] summary { padding-bottom: 0.4rem; }
-  .demo .msg { border-bottom: 0; padding-top: 0.4rem; }
-  .demo .turn-note { font: 0.8125rem/1.5 var(--mono); color: var(--band-muted); }
-  .demo .pending-text { color: var(--band-muted); }
-  .demo .stand-in { font-size: 0.75rem; color: var(--band-warn); }
-  .demo .report { font-family: var(--mono); font-size: 0.875rem; white-space: pre-wrap; }
 </style>

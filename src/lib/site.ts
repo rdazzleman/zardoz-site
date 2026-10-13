@@ -12,8 +12,7 @@ export const site = {
 
 export const nav = [
   { href: "/how-it-works", label: "How it works" },
-  // "Examples" returns with src/pages/_examples.astro once 286's real runs exist and the
-  // user approves the page; it is out of the 1.8 build so placeholders never go live.
+  { href: "/examples", label: "Examples" },
   { href: "/frameworks", label: "Frameworks" },
   { href: "/models", label: "Models & cost" },
   { href: "/quickstart", label: "Quick start" },

@@ -36,8 +36,9 @@ Two more run continuously rather than per-commit/per-push:
   across multiple function calls). Runs the `security-extended` query suite rather than
   the default — the default is tuned to keep false positives low on very large
   codebases, and this repo is small enough to absorb the extra noise in exchange for
-  wider coverage. Runs on push/PR to `main` and weekly on a schedule; results land in
-  the repo's Security tab.
+  wider coverage. Configured to run on push/PR to `main` and weekly, but not running
+  for 1.8: the public repository runs no workflows, and it has no passing run on the
+  project's own CI.
 - **Dependabot** (`.github/dependabot.yml`) — unlike pip-audit's point-in-time CI check,
   this watches continuously and opens a PR the moment a new CVE is published against a
   Python dependency or a GitHub Action this repo uses, with a 7-day cooldown before
@@ -46,7 +47,8 @@ Two more run continuously rather than per-commit/per-push:
   ci.yml) current — Dependabot resolves and updates the pinned SHA, not just tag-based
   references. **Enabling Dependabot alerts/security updates is a separate step** — go to
   the repo's Settings → Code security and analysis and turn them on; committing
-  `dependabot.yml` alone doesn't enable it.
+  `dependabot.yml` alone doesn't enable it. From 1.8 the public repository runs
+  no automation, so Dependabot doesn't run there.
 
 See `.pre-commit-config.yaml` and `.github/workflows/ci.yml`.
 

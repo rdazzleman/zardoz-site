@@ -71,10 +71,16 @@ not a fourth parallel document set.
 ## The topic registry
 
 Topics are declared in `config/topics.yaml` — gitignored, because it names
-your internal teams. `policyforge init` writes it from
-`config/topics.example.yaml`: 27 starter topics, grouped under 12 Policies,
-that fully cover the Low, Moderate and High baselines. Change the owners to
-your teams. Each topic names the Policy its Standard sits under with
+your internal teams. `policyforge init` writes it from five **scope facts**
+about your organisation (`--builds-software`, `--own-facilities`,
+`--personal-data`, `--baseline` and `--ai`, also kept under `programme:` in
+`config/config.yaml`), choosing at most 25 topics from the pool in
+`config/topics.example.yaml`, whose 33 topics fully cover the Low, Moderate
+and High baselines. A topic your scope doesn't call for folds into its
+nearest core topic, and `init` prints every fold and every fact you didn't
+declare (an undeclared fact counts as off). A healthcare SaaS that builds
+software, has no facilities of its own, handles PHI and follows 800-53 gets
+22 topics under 10 Policies. Change the owners to your teams. Each topic names the Policy its Standard sits under with
 `policy:`, and the `policies:` block in the same file describes each Policy
 and the page it publishes to.
 
@@ -101,26 +107,39 @@ either becoming contested.
 ## Checking ownership: `policyforge coverage`
 
 ```
+policyforge init my-policies --builds-software --no-own-facilities \
+  --personal-data phi --baseline 800-53 --ai none
+cd my-policies
 policyforge coverage --baseline moderate
 ```
 
 With no `--controls`, it reads the catalogs `programme.catalogs` names in
 `config/config.yaml`; the starter `init` writes lists 800-53, the AI RMF and
-the three HIPAA rules.
+the three HIPAA rules. For this healthcare SaaS with no facilities of its own:
 
 ```
 catalogs: programme (5): nist-800-53-r5, nist-ai-rmf, hipaa-security-rule, hipaa-privacy-rule, hipaa-breach-notification-rule
 Coverage — scope: Moderate baseline
 ============================================================
   In scope        287
-  Owned           287 (100%)
-  Orphaned        0
+  Owned           269 (94%)
+  Orphaned        18
   Contested       0
+...
+Orphaned — no topic claims these
+------------------------------------------------------------
+  PE-1, PE-2, PE-3, PE-4, PE-5, PE-6, PE-6(1), PE-8
+  PE-9, PE-10, PE-11, PE-12, PE-13, PE-13(1), PE-14, PE-15
+  PE-16, PE-17
 ...
 HIPAA reachable via the crosswalk
 ------------------------------------------------------------
-  65 of 74 requirements map to an owned NIST control
+  63 of 74 requirements map to an owned NIST control
 ```
+
+The orphans are the physical controls: with `--no-own-facilities`, no topic
+takes them, and the report says so rather than hiding them, so you can record
+who does (here, usually your hosting provider).
 
 It reports four things, and needs no LLM — it's set arithmetic over the
 registry:

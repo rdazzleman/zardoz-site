@@ -19,9 +19,11 @@
  * Standard by line range and checked to be a verbatim slice of it; each names
  * its source lines. They are never edited here.
  *
- * `standIn` marks a demo answer copied from the PolicyForge docs, which
- * answers over a different document set. Those are layout stand-ins for the
- * preview only and must all be replaced before the page goes live.
+ * `demo` is the ask-Zardoz transcript, which the page does not show in 1.8:
+ * the user moved the Zardoz demos to 1.9 (to 5b, 2026-10-13). It is kept for
+ * that release. `standIn` marks an answer copied from the PolicyForge docs,
+ * over a different document set; every one must be replaced before the demo
+ * is shown.
  */
 
 export type Model = {
@@ -61,7 +63,8 @@ export type Turn = {
 const HOSTED = "Hosted, via OpenRouter";
 
 export const examples = {
-  /** "run": the documents exist but aren't published yet, so the links are off. */
+  /** "run": the run's figures and excerpts are shown; `repoUrl` and `confluenceUrl` add
+   * the links to the documents once they're published (the user decides where). */
   status: "run" as "pending" | "run" | "published",
   version: "1.8 (release branch, 0cce41e3)",
   date: "2026-10-13" as string | null,
@@ -214,6 +217,7 @@ const inWords = (n: number) => WORDS[n] ?? String(n);
 export const modelCount = inWords(examples.models.length);
 export const hostedCount = inWords(examples.models.filter((m) => m.where !== "Your own machine").length);
 export const localCount = inWords(examples.models.filter((m) => m.where === "Your own machine").length);
+export const topicWords = inWords(examples.topicCount);
 
 /** The label every excerpt carries. */
 export function stamp(model: Model): string {

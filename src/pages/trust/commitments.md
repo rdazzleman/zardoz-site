@@ -264,5 +264,7 @@ python -m pytest tests/test_no_undeclared_endpoints.py \
 ```
 
 `python scripts/check.py` runs these along with every linter and scanner.
-[OpenSSF Scorecard](https://github.com/rdazzleman/policyforge/blob/v1.8.0/.github/workflows/scorecard.yml) publishes a
-third-party grade of the repository practices behind them.
+The source tree also carries CodeQL and OpenSSF Scorecard workflows, but
+neither runs for 1.8: the public repository runs no workflows, and neither
+has a passing run on the project's own CI, so no third-party grade is
+published for this release.

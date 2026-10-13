@@ -237,7 +237,8 @@ processor.
 [`tests/test_force_split.py`](https://github.com/rdazzleman/policyforge/blob/v1.8.0/tests/test_force_split.py),
 [`tests/test_side_channels.py`](https://github.com/rdazzleman/policyforge/blob/v1.8.0/tests/test_side_channels.py),
 [`tests/test_content_class_handoff.py`](https://github.com/rdazzleman/policyforge/blob/v1.8.0/tests/test_content_class_handoff.py).
-gitleaks in [`ci.yml`](https://github.com/rdazzleman/policyforge/blob/v1.8.0/.github/workflows/ci.yml).
+gitleaks in `.github/workflows/ci.yml`, run on the project's own CI (the
+public repository leaves `.github/workflows/` out and runs no workflows).
 
 **Residual.**
 
@@ -281,8 +282,8 @@ it.**
 
 **Evidence.** [`tests/test_parser_gate.py`](https://github.com/rdazzleman/policyforge/blob/v1.8.0/tests/test_parser_gate.py),
 [`tests/test_parser_codegen.py`](https://github.com/rdazzleman/policyforge/blob/v1.8.0/tests/test_parser_codegen.py),
-[`ci.yml`](https://github.com/rdazzleman/policyforge/blob/v1.8.0/.github/workflows/ci.yml),
-[`dependabot.yml`](https://github.com/rdazzleman/policyforge/blob/v1.8.0/.github/dependabot.yml). Semgrep's `p/owasp-top-ten`
+`.github/workflows/ci.yml` and `.github/dependabot.yml` (in the source tree;
+the public repository leaves them out and runs neither). Semgrep's `p/owasp-top-ten`
 ruleset is what caught this repo's own Actions using mutable tags.
 
 **Residual.** `parser_gate` is not a sandbox and does not claim to be — code
@@ -318,9 +319,8 @@ rather than one bad reply.
    [`frameworks/drift.py`](https://github.com/rdazzleman/policyforge/blob/v1.8.0/src/policyforge/frameworks/drift.py) and
    `policyforge drift` report what a catalog update changed, so a catalog
    that changed underneath you is a reviewable event rather than a silent
-   one. A scheduled CI job
-   ([`framework-drift.yml`](https://github.com/rdazzleman/policyforge/blob/v1.8.0/.github/workflows/framework-drift.yml))
-   watches for it.
+   one. A scheduled job on the project's own CI
+   (`.github/workflows/framework-drift.yml`) watches for it.
 1. **Catalog provenance and offline integrity checking** —
    [`ingest/provenance.py`](https://github.com/rdazzleman/policyforge/blob/v1.8.0/src/policyforge/ingest/provenance.py) stamps a
    fetched catalog with its upstream revision, source URL, fetch time and a

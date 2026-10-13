@@ -19,7 +19,8 @@ brew install rdazzleman/tap/policyforge
 policyforge init my-policies --provider anthropic && cd my-policies
                                                    # writes config/config.yaml (provider, model, and the NAME of
                                                    # the env var holding your key) and config/topics.yaml
-                                                   # (27 starter topics under 12 Policies, each with an owning team);
+                                                   # (topics chosen from your scope facts, each with an owning team:
+                                                   # add --personal-data phi, --baseline 800-53 and the like);
                                                    # leave --provider off for a local model that needs no key
 export ANTHROPIC_API_KEY=sk-...                    # whichever variable your config names
 policyforge llm-check                              # confirms the key works, and prints what the provider supports

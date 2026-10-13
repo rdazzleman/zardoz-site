@@ -116,9 +116,10 @@ so the defaults are conservative:
   `publish --apply`.)
 
 - **Macro refusal.** The edit path is storage format → markdown → edit →
-  storage format, which is lossless only for the `code` macro this project's
-  own exporter emits. A page containing a panel, expand block or page-property
-  macro is **refused**, not warned about, because editing it would flatten
+  storage format, which is lossless only for the macros this project's own
+  exporter emits: `code`, and the `expand` that carries a Standard's quoted
+  sources. A page containing a panel, any other expand block or a
+  page-property macro is **refused**, not warned about, because editing it would flatten
   parts nobody asked to change. `--allow-macros` overrides once you've read
   what will be lost.
 

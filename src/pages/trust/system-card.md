@@ -105,8 +105,9 @@ Eight [commitments](/trust/commitments/), each enforced by a named test, coverin
 outbound endpoints, credential containment, content ceilings, ledger
 contents, licensed-content handling, model-written code, publication gates,
 and traceability. CI runs ruff, gitleaks, pip-audit, bandit, semgrep,
-mdformat and pytest on every push, CodeQL `security-extended` weekly, and
-OpenSSF Scorecard for third-party grading of repository practice.
+mdformat and pytest on every push. CodeQL `security-extended` and OpenSSF
+Scorecard are configured but don't run for 1.8, so no third-party grade is
+published for this release.
 
 Report vulnerabilities via [the security policy](/trust/security/).
 

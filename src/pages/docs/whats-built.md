@@ -101,9 +101,9 @@ data. What remains of the idea — per-team bundles, evidence artifacts and the
 reverse view — is in theme 2 above.
 
 - [x] **Topic registry** (`config/topics.yaml` + `topics/registry.py`) — topic name,
-  owner, cadence, NIST anchors, evidence artifacts, with a 27-topic starter set,
-  grouped under 12 Policies, in `config/topics.example.yaml` that fully covers all three
-  baselines
+  owner, cadence, NIST anchors, evidence artifacts, with a 33-topic pool in
+  `config/topics.example.yaml` that fully covers all three baselines, from which `init`
+  chooses up to 25 by your organisation's scope facts
 - [x] **Coverage and ownership analysis** (`policyforge coverage`) — orphaned and
   contested controls, unknown vs out-of-scope anchors, per-team rollup, and
   cross-framework reachability via the crosswalk. `--strict` for CI, `--json` for

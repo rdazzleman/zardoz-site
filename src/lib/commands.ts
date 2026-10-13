@@ -8,7 +8,7 @@ export const stages: { title: string; summary: string; key: string[]; cmds: [str
     key: ["init", "llm-check"],
     summary: "Create a project and confirm your AI connection works. Nothing here spends money except one small test call.",
     cmds: [
-      ["init", "Create a project folder with the included frameworks, a working settings file and topic list. --refresh updates them after an upgrade."],
+      ["init", "Create a project folder with the included frameworks, a working settings file, and a topic list chosen from a few facts about your organization. --refresh updates them after an upgrade."],
       ["llm-check", "Confirm your API key and model work, and show what the provider supports."],
       ["frameworks", "List the frameworks on disk and whether each may be shared."],
       ["boundary", "Show which content may be sent to your configured AI model, and why."],
@@ -36,6 +36,7 @@ export const stages: { title: string; summary: string; key: string[]; cmds: [str
       ["etl-hitrust", "Read your own licensed HITRUST CSF export. Needs the licensed-framework plugin; contact us for it."],
       ["etl-govramp", "Read your own GovRAMP controls matrix. Needs the licensed-framework plugin; contact us for it."],
       ["etl-soc2-tsc", "Read your own copy of the AICPA's SOC 2 Trust Services Criteria. Needs the licensed-framework plugin; contact us for it."],
+      ["library", "Keep your own licensed catalog's versions, each traced to the export it came from, with a change log between them."],
       ["etl-vault", "Read Markdown notes in one specific shape (frontmatter, headings and wikilinks), the format this project started from."],
       ["generate-parser", "Draft a reader for a framework format that isn't supported yet, from a sample file."],
     ],
@@ -57,7 +58,7 @@ export const stages: { title: string; summary: string; key: string[]; cmds: [str
     summary: "This is where AI is used. For each topic, every relevant requirement is merged into one list, then written up as a Standard and a Procedure; a Policy covers one or more topics' Standards. The AI works only from the text it is given.",
     cmds: [
       ["synthesize", "Merge every requirement a topic owns into one de-duplicated list."],
-      ["generate", "Write a Standard or Procedure from that list, or one Policy over several Standards."],
+      ["generate", "Write a Standard or Procedure from that list, one Policy over several Standards, or an Acceptable Use Policy."],
       ["parameters", "Record your decided values, like a review frequency, so regenerated documents use them."],
       ["ssp", "Build a NIST 800-53 System Security Plan as a spreadsheet."],
     ],

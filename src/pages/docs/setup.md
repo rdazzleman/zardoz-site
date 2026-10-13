@@ -32,7 +32,10 @@ project directory first:
    `.gitignore` that keeps your config, topic registry, licensed exports and
    working files (`output/`) out of version control. Drafted documents go to
    `docs/`, which it leaves in version control. Leave `--provider` off for a local model that
-   needs no key. `init` never overwrites a file that is already there; after an
+   needs no key. Declare your scope facts too (`--personal-data phi`,
+   `--baseline 800-53`, `--builds-software`, `--own-facilities`, `--ai`): `init`
+   chooses the topics from them, and an undeclared fact counts as off.
+   `init` never overwrites a file that is already there; after an
    upgrade, `policyforge init --refresh` brings the catalogs and examples up to
    date and lists what changed.
 1. `export ANTHROPIC_API_KEY=sk-...` (or whatever env var name your config names)

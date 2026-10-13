@@ -201,7 +201,9 @@ as a conspicuous `@unresolved-user` and `sync` reports the count, rather than
 leaving an empty cell.
 
 This never mattered before because PolicyForge's own exporter emits only the
-`code` macro, so round-tripping its own documents was always clean. It only
+`code` macro and the `expand` holding a Standard's quoted sources, both of
+which it reads back exactly, so round-tripping its own documents was always
+clean. It only
 surfaces when reading somebody else's page.
 
 **Readable is a lower bar than editable.** There is no required format —

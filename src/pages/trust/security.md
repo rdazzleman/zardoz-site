@@ -51,9 +51,10 @@ note: {"text": "To report a vulnerability, use GitHub's private vulnerability re
 Reports that duplicate a check already in CI are usually already known. On
 every push and pull request: ruff, gitleaks (full history), pip-audit,
 bandit, semgrep (`p/python`, `p/security-audit`, `p/owasp-top-ten`),
-mdformat, and pytest. CodeQL `security-extended` runs on `main` and weekly.
-Dependabot watches dependencies and SHA-pinned actions with a seven-day
-cooldown.
+mdformat, and pytest. CodeQL `security-extended` and Dependabot (with a
+seven-day cooldown) are configured in the repository but don't run for 1.8:
+the public repository runs no automation, and CodeQL has no passing run on
+the project's own CI.
 
 Run the whole set locally with `python scripts/check.py`.
 
