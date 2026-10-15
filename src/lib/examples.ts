@@ -1,19 +1,24 @@
 /**
  * The /examples page's content: PolicyForge run for real on public-framework
- * topics with seven models (PolicyForge issue 286; the lineup is the user's,
- * recorded on 286 as comment 6468).
+ * topics (PolicyForge issue 286). Three models over the full registry `init`
+ * writes for the fictional Roritor Health (80's 6635, the user's "choose fewer
+ * models"); the six-topic first pass on seven models was rejected by the user on
+ * 2026-10-13 and is not shown.
  *
- * The run: six topics, the fictional Roritor Health profile, release/1.8 at
- * 0cce41e3, 2026-10-13, by b5 (286 comments 6596 and 6597). Its tree is
- * C:\policyforge-local\example-output\roritor-1.8\ on the team's machine.
+ * The run: 25 topics under 11 Policies, from 456's `init` on Roritor's scope
+ * facts, owners from the profile's teams, reply budgets opened to each model's
+ * maximum, by b5 from 2026-10-13 ~19:25 CDT (286 comment 6636). Its tree is
+ * C:\policyforge-local\example-output\roritor-full\ on the team's machine. The
+ * run doesn't record its PolicyForge commit, so the page names the release
+ * branch only.
  *
  * Every figure is copied from that run, never written by hand: a model's cost
- * is its ledger total (`run_usd_ledger` in its run.json), the topic cost is
- * the sum of that topic's step costs, the time is the sum of its steps'
- * seconds, and the document counts are the files in its standards/,
- * procedures/ and policies/. Costs are what OpenRouter billed, one sample each
- * at the engine's default effort (80's ruling, 286 comment 6600). DeepSeek's is
- * a floor: the pass was billed $0.86 that no ledger row holds.
+ * is the sum of `cost_usd` over its ledger rows (every one `cost_source:
+ * provider`, i.e. what OpenRouter billed), the topic cost is that sum over the
+ * topic's rows, the time is the wall clock from its first ledger row to its
+ * last (the hosted models ran as parallel workers), "topics finished" is the
+ * union of its workers' `completed`, and the document counts are the files in
+ * its standards/, procedures/ and policies/.
  *
  * The comparison excerpts are files in src/content/examples/, cut from each
  * Standard by line range and checked to be a verbatim slice of it; each names
@@ -39,7 +44,7 @@ export type Model = {
   /** The comparison topic's cost alone (its synthesis, Standard and Procedure steps). */
   topicUsd: number | null;
   minutes: number | null;
-  /** Of the run's six topics, how many got both a Standard and a Procedure. */
+  /** Of the run's topics, how many got both a Standard and a Procedure. */
   topicsDone: number | null;
   docs: { standards: number; procedures: number; policies: number } | null;
   /** What went wrong, in one line, when a model didn't finish everything. */
@@ -66,10 +71,10 @@ export const examples = {
   /** "run": the run's figures and excerpts are shown; `repoUrl` and `confluenceUrl` add
    * the links to the documents once they're published (the user decides where). */
   status: "run" as "pending" | "run" | "published",
-  version: "1.8 (release branch, 0cce41e3)",
+  version: "1.8 (release branch)",
   date: "2026-10-13" as string | null,
   org: "Roritor Health, Inc.",
-  topicCount: 6,
+  topicCount: 25,
   repoUrl: null as string | null,
   confluenceUrl: null as string | null,
 
@@ -81,41 +86,20 @@ export const examples = {
   models: [
     {
       key: "local", label: "Local · Qwen3 14B", id: "qwen3:14b-pf32", where: "Your own machine",
-      costUsd: 0, costSource: null, topicUsd: 0, minutes: 24, topicsDone: 6,
-      docs: { standards: 6, procedures: 6, policies: 2 },
-    },
-    {
-      key: "glm", label: "GLM 5.3", id: "z-ai/glm-5.3", where: HOSTED,
-      costUsd: 1.9314, costSource: "billed", topicUsd: 0.1972, minutes: 52, topicsDone: 6,
-      docs: { standards: 6, procedures: 6, policies: 2 },
+      costUsd: 0, costSource: null, topicUsd: 0, minutes: 130, topicsDone: 22,
+      docs: { standards: 22, procedures: 22, policies: 10 },
+      outcome: "Three AI topics’ Standards failed the AI RMF Playbook check (NIST’s suggested actions weren’t written as NIST’s), so they and the AI Governance Policy over them weren’t written.",
     },
     {
       key: "opus", label: "Claude Opus 5.5", id: "anthropic/claude-opus-5.5", where: HOSTED,
-      costUsd: 10.362, costSource: "billed", topicUsd: 2.1845, minutes: 64, topicsDone: 5,
-      docs: { standards: 5, procedures: 5, policies: 2 },
-      outcome: "One topic's merged requirements ran past the 32,768-token reply budget and were cut off, so nothing was written for Identity Lifecycle & Access Review.",
+      costUsd: 34.002, costSource: "billed", topicUsd: 1.5759, minutes: 92, topicsDone: 24,
+      docs: { standards: 24, procedures: 24, policies: 10 },
+      outcome: "Its AI Risk Treatment & Incident Response Standard failed the AI RMF Playbook check, so that topic and the AI Governance Policy over it weren’t written.",
     },
     {
       key: "gpt", label: "GPT-6 Sol", id: "openai/gpt-6-sol", where: HOSTED,
-      costUsd: 1.6056, costSource: "billed", topicUsd: 0.29, minutes: 26, topicsDone: 6,
-      docs: { standards: 6, procedures: 6, policies: 2 },
-    },
-    {
-      key: "gemini", label: "Gemini 3.1 Pro (preview)", id: "google/gemini-3.1-pro-preview", where: HOSTED,
-      costUsd: 3.5695, costSource: "billed", topicUsd: 0.5422, minutes: 42, topicsDone: 6,
-      docs: { standards: 6, procedures: 6, policies: 2 },
-    },
-    {
-      key: "deepseek", label: "DeepSeek V4 Pro", id: "deepseek/deepseek-v4-pro-0813", where: HOSTED,
-      costUsd: 2.3832, costSource: "billed", floor: true, topicUsd: 0.5697, minutes: 131, topicsDone: 2,
-      docs: { standards: 2, procedures: 2, policies: 0 },
-      outcome: "Finished 2 of 6 topics at the default settings: on the other four, its reasoning used the whole reply budget and returned no text.",
-    },
-    {
-      key: "llama", label: "Llama 3.2 1B", id: "meta-llama/llama-3.2-1b-instruct", where: HOSTED,
-      costUsd: 0.0203, costSource: "billed", topicUsd: 0.0004, minutes: 29, topicsDone: 0,
-      docs: { standards: 5, procedures: 0, policies: 0 },
-      outcome: "Wrote five Standards with no title, so no Procedure could be drafted from them; its sixth failed the AI RMF Playbook check.",
+      costUsd: 6.0536, costSource: "billed", topicUsd: 0.2677, minutes: 48, topicsDone: 25,
+      docs: { standards: 25, procedures: 25, policies: 11 },
     },
   ] satisfies Model[],
 
@@ -124,13 +108,7 @@ export const examples = {
     topic: "Incident Response",
     section: "Incident response training: who is trained, and when",
     /** Keyed by `models[].key`; a model with an excerpt file needs no entry here. */
-    drafts: [
-      {
-        model: "llama",
-        path: null,
-        note: "Its Standard has no requirements to compare: below its title is a single heading of “1.1.1.1…”, 19,598 characters long.",
-      },
-    ] as Draft[],
+    drafts: [] as Draft[],
   },
 
   /** One topic's document set, top to bottom. */

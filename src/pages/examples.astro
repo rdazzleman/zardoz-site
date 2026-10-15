@@ -24,8 +24,8 @@ const docs = (d: { standards: number; procedures: number; policies: number } | n
         <p class="eyebrow">Examples</p>
         <h1>Real output, unedited.</h1>
         <p class="lede">
-          We ran PolicyForge on {topicWords} topics for {examples.org}, a fictional
-          healthcare company, with {modelCount} AI models: {localCount} on a laptop and{" "}
+          We ran PolicyForge on {examples.org}, a fictional healthcare company: all{" "}
+          {topicWords} topics <code>init</code> chose from its scope, under 11 Policies, with {modelCount} AI models: {localCount} on a laptop and{" "}
           {hostedCount} hosted, on {examples.date}. Everything below is shown exactly as it was
           generated, with its model, version and cost, including the models that didn’t
           finish.
@@ -138,11 +138,12 @@ const docs = (d: { standards: number; procedures: number; policies: number } | n
         </div>
         <p class="table-note">
           Cheapest first. Each cost is the run’s own ledger total for the {topicWords}{" "}
-          topics, as OpenRouter billed it: one sample, at the engine’s default effort, so treat
-          it as one run rather than a rate. DeepSeek’s is a floor: the run was billed $0.86 more
-          than its ledgers hold, probably for DeepSeek calls that returned no text. Time is the run’s wall clock. A topic is finished when it has
-          both a Standard and a Procedure; a Policy was drafted only where every Standard under
-          it was. The local model costs nothing to run, and nothing it read left the machine.
+          topics, as OpenRouter billed it: one sample, with each model’s reply budget opened to
+          its maximum, so treat it as one run rather than a rate. Time is the wall clock from
+          first call to last; the hosted models ran several topics at once. A topic is finished
+          when it has both a Standard and a Procedure, and a Policy is drafted only once every
+          Standard under it exists. The local model costs nothing to run, and nothing it read
+          left the machine.
         </p>
       </div>
     </section>
